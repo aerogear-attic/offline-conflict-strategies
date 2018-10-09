@@ -1,7 +1,7 @@
 {
   "name": "conflict-strategies",
   "version": "1.0.0",
-  "description": "Conflict Strategies",
+  "description": "Conflict Strategies`",
   "main": "index.js",
   "types": "lib/index.d.ts",
   "scripts": {
