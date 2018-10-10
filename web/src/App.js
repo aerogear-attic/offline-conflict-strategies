@@ -7,7 +7,7 @@ import {AddUser} from './AddUser'
 import {ListUser} from './ListUser'
 import {SyncButton} from './SyncButton'
 
-import {SyncOfflineMutation} from './SyncOfflineMutation'
+import {SyncOfflineMutation} from './mutations/SyncOfflineMutation'
 
 class App extends Component {
 

@@ -6,13 +6,13 @@ import {persistCache} from 'apollo-cache-persist'
 import {onError} from 'apollo-link-error'
 
 
-import {QueueMutationLink} from './QueueMutationLink'
-import {SyncOfflineMutation} from './SyncOfflineMutation'
+import { QueueMutationLink } from './mutations/QueueMutationLink'
+import { SyncOfflineMutation } from './mutations/SyncOfflineMutation'
 
 export const setupApolloClient = async () => {
 
   const storage = window.localStorage
-  const uri = `https://api.graph.cool/simple/v1/cjicrt45i0svu01337s6tl944`
+  const uri = `https://api.graph.cool/simple/v1/cjmltohxn3phc0173w5w6p659`
   const httpLink = new HttpLink({uri})
   const onErrorLink = onError(({response, graphQLErrors, networkError}) => {
     console.log(networkError)
