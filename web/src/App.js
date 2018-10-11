@@ -3,9 +3,9 @@ import logo from './logo.svg'
 import './App.css'
 import {ApolloProvider} from 'react-apollo'
 import {setupApolloClient} from './apolloClient'
-import {AddUser} from './AddUser'
-import {ListUser} from './ListUser'
-import {SyncButton} from './SyncButton'
+import {AddUser} from './view/AddUser'
+import {ListUser} from './view/ListUser'
+import { SyncButton } from './SyncButton'
 
 import {SyncOfflineMutation} from './mutations/SyncOfflineMutation'
 

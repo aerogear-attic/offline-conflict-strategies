@@ -26,7 +26,7 @@ export const setupApolloClient = async () => {
 
   let link = ApolloLink.from([queueLink, onErrorLink, httpLink])
 
-  const apolloClient = new ApolloClient({link, cache,})
+  const apolloClient = new ApolloClient({link, cache})
   await persistCache({
     cache,
     storage: window.localStorage,

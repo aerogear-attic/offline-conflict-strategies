@@ -19,7 +19,7 @@ export class SyncButton extends React.Component {
 
   render() {
     const {hasOfflineData} = this.state
-    return <Button bsStyle="danger" disabled={!hasOfflineData} onClick={this.sync}>Sync Offline data</Button>
+    return <div><Button bsStyle="danger" disabled={!hasOfflineData} onClick={this.sync}>Sync Offline data</Button></div>
   }
 }
 

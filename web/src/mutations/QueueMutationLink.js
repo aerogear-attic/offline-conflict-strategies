@@ -7,7 +7,7 @@ export class QueueMutationLink extends ApolloLink {
 
     if (!storage) throw new Error('Storage can be window.localStorage or AsyncStorage but was not set')
     this.storage = storage
-    this.storeKey = '@offlineQueueKey'
+    this.storeKey = 'wtr-mutation-store'
     this.queue = []
     this.isOpen = true
   }
