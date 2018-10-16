@@ -1,37 +1,37 @@
 import gql from 'graphql-tag'
 
 export const ADD_USER = gql`
-mutation createUser($name: String, $dateOfBirth : DateTime ) {
-  createUser(dateOfBirth: $dateOfBirth, name: $name) {
-    id
-    name
-    dateOfBirth
+mutation createUser($dateOfBirth: String, $name: String){
+    createUser(dateOfBirth: $dateOfBirth, name: $name){
+      id
+      name
+      dateOfBirth
+    }
   }
-}
 `
 
 export const GET_USERS = gql`
- query allUsers {
-  allUsers {
-		dateOfBirth
-    name
-    id
-  }
+  query allUsers {
+    allUsers{
+      id
+      name
+      dateOfBirth
+    }
 }
 `
 
 export const DELETE_USER = gql`
-mutation deleteUser($id: ID! )  {
-  deleteUser(id: $id) {
-    dateOfBirth
+mutation deleteUser($id: ID!){
+  deleteUser(id: $id){
     id
     name
+    dateOfBirth
   }
 }
 `
 
 export const UPDATE_USER = gql`
-mutation updateUser($dateOfBirth: DateTime, $id: ID!, $name: String) {
+mutation updateUser($dateOfBirth: String, $id: ID!, $name: String) {
   updateUser(dateOfBirth: $dateOfBirth, id: $id, name: $name) {
     dateOfBirth
     id

@@ -10,7 +10,6 @@ import { QueueMutationLink } from './mutations/QueueMutationLink'
 import { SyncOfflineMutation } from './mutations/SyncOfflineMutation'
 
 export const setupApolloClient = async () => {
-
   const storage = window.localStorage
   const uri = `https://api.graph.cool/simple/v1/cjmltohxn3phc0173w5w6p659`
   const httpLink = new HttpLink({uri})
