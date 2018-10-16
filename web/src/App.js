@@ -5,7 +5,7 @@ import {ApolloProvider} from 'react-apollo'
 import {setupApolloClient} from './apolloClient'
 import {AddUser} from './view/AddUser'
 import {ListUser} from './view/ListUser'
-import { SyncButton } from './SyncButton'
+import { SyncButton } from './view/SyncButton'
 
 import {SyncOfflineMutation} from './mutations/SyncOfflineMutation'
 
