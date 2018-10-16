@@ -10,8 +10,7 @@ Collection of projects and example apps used for offline investigations.
 - server-graphcool - graph.cool project that can be used with web app
 - web - react app using Apollo Boost and Offline mutations 
 
-Web app is 
-
+Web app is the main project for spikes
 
 ## Web project
 
