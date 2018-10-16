@@ -1,25 +1,29 @@
 import React from 'react'
 import {Button} from 'react-bootstrap'
 import {withApollo} from 'react-apollo'
-import {SyncOfflineMutation} from './mutations/SyncOfflineMutation'
+import {SyncOfflineMutation} from '../mutations/SyncOfflineMutation'
 
 export class SyncButton extends React.Component {
 
-  state = {hasOfflineData: false}
-
+  state = { }
+  
   async componentDidMount() {
     this.syncOfflineMutation = new SyncOfflineMutation({apolloClient: this.props.client, storage: window.localStorage })
     await this.syncOfflineMutation.init()
-    this.setState({hasOfflineData: this.syncOfflineMutation.hasOfflineData()})
   }
 
+
   sync = async () => {
-    await this.syncOfflineMutation.sync()
+    if(this.syncOfflineMutation.hasOfflineData()){
+      await this.syncOfflineMutation.sync()
+      alert("Data synchronized with server!")
+    }else{
+      alert("No data to sync!")
+    }
   }
 
   render() {
-    const {hasOfflineData} = this.state
-    return <div><Button bsStyle="danger" disabled={!hasOfflineData} onClick={this.sync}>Sync Offline data</Button></div>
+    return <div><Button bsStyle="danger" onClick={this.sync}>Sync Offline data</Button></div>
   }
 }
 

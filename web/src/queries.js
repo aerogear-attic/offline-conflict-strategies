@@ -10,6 +10,7 @@ mutation createUser($dateOfBirth: String, $name: String){
   }
 `
 
+
 export const GET_USERS = gql`
   query allUsers {
     allUsers{

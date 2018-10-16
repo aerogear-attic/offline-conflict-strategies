@@ -5,7 +5,7 @@ export class SyncOfflineMutation {
 
     this.apolloClient = apolloClient
     this.storage = storage
-    this.storeKey = 'wtr-mutation-store'
+    this.storeKey = 'offline-mutation-store'
     this.offlineData = []
   }
 
