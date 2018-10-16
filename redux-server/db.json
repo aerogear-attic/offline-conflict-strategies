@@ -1,0 +1,12 @@
+{
+  "todos": [
+    {
+      "id": "77f8c944-d152-11e8-a8d5-f2801f1b9fd1",
+      "task": "Implement JS SDK"
+    },
+    {
+      "id": "77f8cd0e-d152-11e8-a8d5-f2801f1b9fd2",
+      "task": "Implement Android SDK"
+    }
+  ]
+}
