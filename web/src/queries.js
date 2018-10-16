@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const ADD_USER = gql`
-mutation createUser($dateOfBirth: String, $name: String){
+mutation createUser($dateOfBirth: String!, $name: String!){
     createUser(dateOfBirth: $dateOfBirth, name: $name){
       id
       name
