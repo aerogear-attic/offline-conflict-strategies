@@ -1,5 +1,9 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.0.0/workbox-sw.js');
 
+workbox.core.setCacheNameDetails({
+  suffix: "graphql-sandbox"
+});
+
 // https://developers.google.com/web/tools/workbox/reference-docs/latest/workbox.routing#registerRoute
 workbox.routing.registerRoute(
   /index\.html/,
