@@ -10,10 +10,10 @@ import { GET_USERS, DELETE_USER, UPDATE_USER } from '../queries'
 export const ListUser = () => {
   return (
     <Query query={GET_USERS} fetchPolicy="cache-and-network" errorPolicy="all">
-      {({ refetch, loading, error, data = {} }) => {
+      {({ networkStatus, refetch, loading, error, data = {} }) => {
 
         const { allUsers = [] } = data
-        if (error) return <p>`Error! ${error.message}`</p>
+        if (error && networkStatus === 8) console.info("Network error. Using cached data", allUsers)
 
         return (
           <div>
