@@ -86,7 +86,7 @@ class UserItem extends React.Component {
 
   onDelete = async ({ item }) => {
     const { client } = this.props
-    const variables = { id: item.id }
+    const variables = { id: item.id, version: item.version }
     this.setState({ loading: true })
     await client.mutate({ mutation: DELETE_USER, variables })
     this.setState({ loading: false })
