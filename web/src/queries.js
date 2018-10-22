@@ -6,6 +6,7 @@ mutation createUser($dateOfBirth: String!, $name: String!, $version: Int!){
       id
       name
       dateOfBirth
+      version
     }
   }
 `
@@ -17,16 +18,18 @@ export const GET_USERS = gql`
       id
       name
       dateOfBirth
+      version
     }
 }
 `
 
 export const DELETE_USER = gql`
-mutation deleteUser($id: ID!){
-  deleteUser(id: $id){
+mutation deleteUser($id: ID!, $version: Int!){
+  deleteUser(id: $id, version: $version){
     id
     name
     dateOfBirth
+    version
   }
 }
 `
