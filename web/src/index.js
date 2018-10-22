@@ -4,7 +4,9 @@ import './index.css';
 import App from './App';
 
 import registerServiceWorker from './registerServiceWorker';
-registerServiceWorker();
+
+// Disabled temporaily for development
+//registerServiceWorker();
 
 ReactDOM.render(<App />, document.getElementById('root'));
 
