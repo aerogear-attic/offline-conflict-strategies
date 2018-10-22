@@ -8,10 +8,10 @@ export class ExtensionsLink extends ApolloLink {
     request = (operation, forward) => {
         if (!operation.extensions) {
             operation.extensions = {
-                test: "test"
+                version: 1
             }
         } else {
-            operation.extensions.test = "test";
+            operation.extensions.version = 1;
         }
         console.log(operation)
         return forward(operation);
