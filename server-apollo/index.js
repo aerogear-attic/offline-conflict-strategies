@@ -2,10 +2,12 @@ const { ApolloServer, gql } = require('apollo-server');
 const { GraphQLError } = require('graphql')
 
 class ConflictError extends GraphQLError {
-    constructor(type){
+    constructor(type, data){
         const message = "conflict has occured"
         super(message)
+        this.data = data
         this.type = type
+        this.version = data.version
     }
 }
 
@@ -28,22 +30,26 @@ const users = [
 {
     id: 1,
     name: 'Stephen',
-    dateOfBirth: '2018-10-15T14:52:31.888Z'
+    dateOfBirth: '2018-10-15T14:52:31.888Z',
+    version: 1
 },
 {
     id: 2,
     name: 'Wojciech',
-    dateOfBirth: '2014-10-15T14:52:38.376Z'
+    dateOfBirth: '2014-10-15T14:52:38.376Z',
+    version: 1
 },
 {
     id: 3,
     name: 'Passos',
-    dateOfBirth: '2018-10-15T17:42:38.376Z'
+    dateOfBirth: '2018-10-15T17:42:38.376Z',
+    version: 1
 },
 {
     id: 4,
     name: 'Dara',
-    dateOfBirth: '2015-10-15T09:51:18.376Z'
+    dateOfBirth: '2015-10-15T09:51:18.376Z',
+    version: 1
 }
 ]
 
@@ -61,6 +67,7 @@ type User {
     name: String!
     dateOfBirth: String!
     feedback: [Feedback]
+    version: Int!
 }
 type Query {
     allFeedbacks: [Feedback],
@@ -108,29 +115,30 @@ Query: {
 Mutation: {
     createUser: (obj, args, context, info) => {
         args.id = new Date().getTime()
+        args.version = 1
         users.push(args)
         return args
     },
     updateUser: (obj, args, context, info) => {
-    if (args.id == 1){
-        return new ConflictError('mutation')
-    } else {
         for (let user of users) {
             if (args.id == user.id) {
+                if(conflictDetected(user.version, args.version)){
+                    throw new ConflictError('mutation', args)
+                }
                 user.name = args.name
                 user.feedback = args.feedback
                 user.dateOfBirth = args.dateOfBirth
+                user.version = args.version
                 return user
             }
         }
-    }
     },
     deleteUser: (obj, args, context, info) => {
     for (var i = 0; i < users.length; i++) {
         if (args.id == users[i].id) {
-        let returningUser = users[i]
-        users.splice(i, 1)
-        return returningUser
+            let returningUser = users[i]
+            users.splice(i, 1)
+            return returningUser
         }
     }
     throw new Error(`Couldn't find user with id ${args.id}`)
@@ -143,10 +151,10 @@ Mutation: {
     updateFeedback: (obj, args, context, info) => {
     for (let item of feedback) {
         if (args.id == item.id) {
-        item.votes = args.votes
-        item.author = args.author
-        item.text = args.text
-        return item
+            item.votes = args.votes
+            item.author = args.author
+            item.text = args.text
+            return item
         }
     }
     throw new Error(`Couldn't find feedback with id ${args.id}`)
@@ -173,6 +181,10 @@ Mutation: {
 }
 }
 
+const conflictDetected = (server, client) => {
+    return server >= client
+}
+
 const apolloServer = new ApolloServer({
 typeDefs,
 resolvers,
@@ -189,32 +201,32 @@ playground: {
         id
         name
         feedback{
-            id
-            text
-        }
+                id
+                text
+            }
         }
     }
 
     query allFeedbacks{
         allFeedbacks{
-        id
-        text
-        votes
+            id
+            text
+            votes
         }
     }
 
     query getFeedback{
         getFeedback(id: 1){
-        id
-        text
-        votes
+            id
+            text
+            votes
         }
     }
 
     query getUser{
         getUser(id: 1){
-        id
-        name
+            id
+            name
         }
     }
 
@@ -227,24 +239,24 @@ playground: {
 
     mutation updateUser{
         updateUser(id:1, name: "idiot"){
-        id
-        name
+            id
+            name
         }
     }
 
     mutation deleteUser{
         deleteUser(id:1){
-        id
-        name
+            id
+            name
         }
     }
 
     mutation deleteFeedback{
         deleteFeedback(id:1){
-        id
+            id
         }
     }
-        `
+    `
     }]
 }
 })

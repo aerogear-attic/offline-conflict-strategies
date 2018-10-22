@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const ADD_USER = gql`
-mutation createUser($dateOfBirth: String!, $name: String!){
-    createUser(dateOfBirth: $dateOfBirth, name: $name){
+mutation createUser($dateOfBirth: String!, $name: String!, $version: Int!){
+    createUser(dateOfBirth: $dateOfBirth, name: $name, version: $version){
       id
       name
       dateOfBirth
@@ -32,11 +32,12 @@ mutation deleteUser($id: ID!){
 `
 
 export const UPDATE_USER = gql`
-mutation updateUser($dateOfBirth: String, $id: ID!, $name: String) {
-  updateUser(dateOfBirth: $dateOfBirth, id: $id, name: $name) {
+mutation updateUser($dateOfBirth: String, $id: ID!, $name: String, $version: Int!) {
+  updateUser(dateOfBirth: $dateOfBirth, id: $id, name: $name, version: $version) {
     dateOfBirth
     id
     name
+    version
   }
 }
 `
