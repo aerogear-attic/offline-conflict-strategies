@@ -13,7 +13,10 @@ import { SyncOfflineMutation } from './mutations/SyncOfflineMutation'
 
 export const setupApolloClient = async () => {
   const storage = window.localStorage
+  // Local server
   const uri = `http://localhost:4000/graphql`
+  // Graph.cool for testing
+  //const uri = `https://api.graph.cool/simple/v1/cjmltohxn3phc0173w5w6p659`
   const httpLink = new HttpLink({ uri })
   const onErrorLink = onError(({ response, graphQLErrors, networkError }) => {
     console.log(networkError)
@@ -25,7 +28,7 @@ export const setupApolloClient = async () => {
   const queueLink = new QueueMutationLink({ storage })
   const cache = new InMemoryCache()
 
-  let link = ApolloLink.from([queueLink, onErrorLink, httpLink, onErrorLink, retryLink, onErrorLink])
+  let link = ApolloLink.from([queueLink, onErrorLink, httpLink, onErrorLink])
 
   const apolloClient = new ApolloClient({ link, cache })
   await persistCache({

@@ -2,11 +2,10 @@ const { ApolloServer, gql } = require('apollo-server');
 const { GraphQLError } = require('graphql')
 
 class ConflictError extends GraphQLError {
-    constructor(type, data){
+    constructor(data){
         const message = "conflict has occured"
         super(message)
         this.data = data
-        this.type = type
         this.version = data.version
     }
 }
@@ -123,7 +122,9 @@ Mutation: {
         for (let user of users) {
             if (args.id == user.id) {
                 if(conflictDetected(user.version, args.version)){
-                    throw new ConflictError('mutation', args)
+                    // TODO add some logic to refetch if online
+                    console.log("CONFLICT DETECTED")
+                    throw new ConflictError(args)
                 }
                 user.name = args.name
                 user.feedback = args.feedback

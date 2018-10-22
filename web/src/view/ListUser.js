@@ -94,10 +94,8 @@ class UserItem extends React.Component {
 
 
   render() {
-
     const { item } = this.props
     const { loading } = this.state
-
     return (
       <tr>
         <td>{item.name}</td>
