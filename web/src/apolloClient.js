@@ -25,7 +25,7 @@ export const setupApolloClient = async () => {
   const queueLink = new QueueMutationLink({ storage })
   const cache = new InMemoryCache()
 
-  let link = ApolloLink.from([queueLink, onErrorLink, httpLink, onErrorLink])
+  let link = ApolloLink.from([queueLink, onErrorLink, httpLink, onErrorLink, retryLink, onErrorLink])
 
   const apolloClient = new ApolloClient({ link, cache })
   await persistCache({
