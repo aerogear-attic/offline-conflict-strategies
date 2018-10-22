@@ -14,17 +14,11 @@ export const setupApolloClient = async () => {
   const storage = window.localStorage
   const uri = `https://api.graph.cool/simple/v1/cjmltohxn3phc0173w5w6p659`
   const httpLink = new HttpLink({ uri })
-  const onErrorLink = onError(({ response, graphQLErrors, networkError }) => {
-    console.log(networkError)
-    console.log(graphQLErrors)
-    console.log(response)
-    response = { errors: null }
-  })
-
+  
   const queueLink = new QueueMutationLink({ storage })
   const cache = new InMemoryCache()
 
-  let link = ApolloLink.from([queueLink, onErrorLink, httpLink, onErrorLink])
+  let link = ApolloLink.from([queueLink, httpLink])
 
   const apolloClient = new ApolloClient({ link, cache })
   await persistCache({
