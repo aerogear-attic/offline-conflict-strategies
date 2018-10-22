@@ -1,5 +1,13 @@
 const { ApolloServer, gql } = require('apollo-server');
+const { GraphQLError } = require('graphql')
 
+class ConflictError extends GraphQLError {
+    constructor(type){
+        const message = "conflict has occured"
+        super(message)
+        this.type = type
+    }
+}
 
 const feedback = [
 {
@@ -99,20 +107,23 @@ Query: {
 
 Mutation: {
     createUser: (obj, args, context, info) => {
-    args.id = new Date().getTime()
-    users.push(args)
-    return args
+        args.id = new Date().getTime()
+        users.push(args)
+        return args
     },
     updateUser: (obj, args, context, info) => {
-    for (let user of users) {
-        if (args.id == user.id) {
-        user.name = args.name
-        user.feedback = args.feedback
-        user.dateOfBirth = args.dateOfBirth
-        return user
+    if (args.id == 1){
+        return new ConflictError('mutation')
+    } else {
+        for (let user of users) {
+            if (args.id == user.id) {
+                user.name = args.name
+                user.feedback = args.feedback
+                user.dateOfBirth = args.dateOfBirth
+                return user
+            }
         }
     }
-    throw new Error(`Couldn't find user with id ${args.id}`)
     },
     deleteUser: (obj, args, context, info) => {
     for (var i = 0; i < users.length; i++) {
@@ -125,9 +136,9 @@ Mutation: {
     throw new Error(`Couldn't find user with id ${args.id}`)
     },
     createFeedback: (obj, args, context, info) => {
-    args.id = new Date().getTime()
-    feedback.push(args)
-    return args
+        args.id = new Date().getTime()
+        feedback.push(args)
+        return args
     },
     updateFeedback: (obj, args, context, info) => {
     for (let item of feedback) {

@@ -1,6 +1,7 @@
 import { ApolloClient } from 'apollo-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
+import { RetryLink } from "apollo-link-retry";
 import { ApolloLink } from 'apollo-link'
 import { persistCache } from 'apollo-cache-persist'
 import { onError } from 'apollo-link-error'
@@ -12,13 +13,19 @@ import { SyncOfflineMutation } from './mutations/SyncOfflineMutation'
 
 export const setupApolloClient = async () => {
   const storage = window.localStorage
-  const uri = `https://api.graph.cool/simple/v1/cjmltohxn3phc0173w5w6p659`
+  const uri = `http://localhost:4000/graphql`
   const httpLink = new HttpLink({ uri })
-  
+  const onErrorLink = onError(({ response, graphQLErrors, networkError }) => {
+    console.log(networkError)
+    console.log(graphQLErrors)
+    console.log(response)
+    response = { errors: null }
+  })
+
   const queueLink = new QueueMutationLink({ storage })
   const cache = new InMemoryCache()
 
-  let link = ApolloLink.from([queueLink, httpLink])
+  let link = ApolloLink.from([queueLink, onErrorLink, httpLink, onErrorLink])
 
   const apolloClient = new ApolloClient({ link, cache })
   await persistCache({
