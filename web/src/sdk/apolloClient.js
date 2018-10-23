@@ -56,8 +56,8 @@ export const setupApolloClient = async () => {
     storage: window.localStorage,
   })
 
-  window.addEventListener('online', () => queueLink.open({ apolloClient }))
-  window.addEventListener('offline', () => queueLink.close())
+  window.addEventListener('online', () => offlineLink.open({ apolloClient }))
+  window.addEventListener('offline', () => offlineLink.close())
 
 
   const syncOfflineMutation = new SyncOfflineMutation({ apolloClient, storage })
