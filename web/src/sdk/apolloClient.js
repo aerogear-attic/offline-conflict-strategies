@@ -4,6 +4,7 @@ import { HttpLink } from 'apollo-link-http'
 import { ApolloLink } from 'apollo-link'
 import { persistCache } from 'apollo-cache-persist'
 import { onError } from 'apollo-link-error'
+import { ConflictLink, NetworkLink } from './links'
 
 // We may use Apollo Boost at later stage to replace this setup
 
@@ -17,33 +18,8 @@ export const setupApolloClient = async () => {
   // Graph.cool for testing
   //const uri = `https://api.graph.cool/simple/v1/cjmltohxn3phc0173w5w6p659`
   const httpLink = new HttpLink({ uri })
-  const conflictHandler = (operation, data) => {
-    console.log(`Conflict happened`, operation, data)
-  }
-  const conflictLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
-    if (graphQLErrors) {
-      for (let err of graphQLErrors) {
-        switch (err.extensions.exception.type) {
-          case 'AgSync:DataConflict':
-            conflictHandler(operation, err.extensions.exception.data)
-        }
-      }
-    }
-  }
-  );
-
-  const networkErrorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
-    if (networkError) {
-      // TODO check if mutation
-      // Use Apollo-link-Retry?
-      // Save to storage if number of retries failed?
-      // Write your own retry logic?
-      console.log(`[Network error]: ${networkError}`);
-      // if you would also like to retry automatically on
-      // network errors, we recommend that you use
-      // apollo-link-retry
-    }
-  });
+  const conflictLink = new ConflictLink().link
+  const networkErrorLink = new NetworkLink().link
 
   const offlineLink = new QueueMutationLink({ storage })
   const cache = new InMemoryCache()
