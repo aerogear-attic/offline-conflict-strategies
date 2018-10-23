@@ -11,7 +11,7 @@ const VALIDATION_TYPE = prefix + "Validation"
 class SyncServerError extends GraphQLError {
     constructor(message, data, type) {
         super(message)
-        this.type = prefix + type || VALIDATION_TYPE
+        this.type = type || VALIDATION_TYPE
         this.data = data
         this.version = data.version
     }
