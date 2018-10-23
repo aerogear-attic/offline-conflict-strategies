@@ -3,7 +3,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
 import { ApolloLink } from 'apollo-link'
 import { persistCache } from 'apollo-cache-persist'
-import { ConflictLink, NetworkLink, retryOnErrorLink } from './links'
+import { conflictLink, networkLink, retryOnErrorLink } from './links'
 
 // We may use Apollo Boost at later stage to replace this setup
 
@@ -19,12 +19,9 @@ export const setupApolloClient = async () => {
   //const uri = `https://api.graph.cool/simple/v1/cjmltohxn3phc0173w5w6p659`
 
   const offlineLink = new QueueMutationLink({ storage })
-  const conflictLink = new ConflictLink().link
-  const networkLink = new NetworkLink().link
-  const retryLink = retryOnErrorLink({numOfAttempts: 2, firstAttempAfter: 5000})
   const httpLink = new HttpLink({ uri })
 
-  const link = ApolloLink.from([offlineLink, conflictLink, networkLink, retryLink, httpLink])
+  const link = ApolloLink.from([offlineLink, conflictLink(), networkLink(), retryOnErrorLink(), httpLink])
 
   const cache = new InMemoryCache()
   const apolloClient = new ApolloClient({ link, cache })

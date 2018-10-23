@@ -1,8 +1,8 @@
 import {RetryLink} from "apollo-link-retry";
 
-export const retryOnErrorLink = ({numOfAttempts = 5, firstAttempAfter = 1000}) => (
+export const retryOnErrorLink = (numOfAttempts, firstAttempAfter) => (
   new RetryLink({
-    delay: {initial: firstAttempAfter},
+    delay: {initial: firstAttempAfter || 1000},
     attempts: (count, operation, error) => {
       console.log(`retryOnErrorLink: {      
         numOfAttempts: ${count}, 
@@ -11,7 +11,7 @@ export const retryOnErrorLink = ({numOfAttempts = 5, firstAttempAfter = 1000}) =
         operation: ${operation},
         error: ${error}
       }`);
-      return (count <= numOfAttempts);
+      return (count <= numOfAttempts || 5);
     }
   })
 );
