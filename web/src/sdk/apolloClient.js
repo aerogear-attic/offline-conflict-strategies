@@ -7,8 +7,8 @@ import { onError } from 'apollo-link-error'
 
 // We may use Apollo Boost at later stage to replace this setup
 
-import { QueueMutationLink } from './mutations/QueueMutationLink'
-import { SyncOfflineMutation } from './mutations/SyncOfflineMutation'
+import { QueueMutationLink } from '../sdk/mutations/QueueMutationLink'
+import { SyncOfflineMutation } from '../sdk/mutations/SyncOfflineMutation'
 
 export const setupApolloClient = async () => {
   const storage = window.localStorage

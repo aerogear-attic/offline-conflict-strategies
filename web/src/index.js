@@ -5,7 +5,7 @@ import App from './App';
 
 import registerServiceWorker from './registerServiceWorker';
 
-// Disabled temporaily for development
+// Disabled temporarily for development
 //registerServiceWorker();
 
 ReactDOM.render(<App />, document.getElementById('root'));
