@@ -20,7 +20,7 @@ export const setupApolloClient = async () => {
   const conflictHandler = (operation, data) => {
     console.log(`Conflict happened`, operation, data)
   }
-  const onErrorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
+  const onConflictLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
     if (graphQLErrors) {
       for (let err of graphQLErrors) {
         switch (err.extensions.exception.type) {
@@ -29,20 +29,27 @@ export const setupApolloClient = async () => {
         }
       }
     }
+  }
+  );
+
+  const onNetworkErrorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
     if (networkError) {
+      // TODO check if mutation
+      // Use Apollo-link-Retry?
+      // Save to storage if numer of retries failed
+      // Write your own retry logic?
       console.log(`[Network error]: ${networkError}`);
       // TODO PASSOS :P
       // if you would also like to retry automatically on
       // network errors, we recommend that you use
       // apollo-link-retry
     }
-  }
-  );
+  });
 
-  const queueLink = new QueueMutationLink({ storage })
+  const offlineLink = new QueueMutationLink({ storage })
   const cache = new InMemoryCache()
 
-  let link = ApolloLink.from([queueLink, onErrorLink, httpLink])
+  let link = ApolloLink.from([offlineLink, onConflictLink, onNetworkErrorLink, httpLink])
 
   const apolloClient = new ApolloClient({ link, cache })
   await persistCache({
