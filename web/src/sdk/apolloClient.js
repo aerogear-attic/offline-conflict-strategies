@@ -19,12 +19,12 @@ export const setupApolloClient = async () => {
   //const uri = `https://api.graph.cool/simple/v1/cjmltohxn3phc0173w5w6p659`
   const httpLink = new HttpLink({ uri })
   const conflictLink = new ConflictLink().link
-  const networkErrorLink = new NetworkLink().link
+  const networkLink = new NetworkLink().link
 
   const offlineLink = new QueueMutationLink({ storage })
   const cache = new InMemoryCache()
 
-  let link = ApolloLink.from([offlineLink, conflictLink, networkErrorLink, httpLink])
+  let link = ApolloLink.from([offlineLink, conflictLink, networkLink, httpLink])
 
   const apolloClient = new ApolloClient({ link, cache })
   await persistCache({

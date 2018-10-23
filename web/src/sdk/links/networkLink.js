@@ -2,7 +2,7 @@ import {
     onError
 } from 'apollo-link-error'
 
-export class ConflictLink {
+export class NetworkLink {
     constructor() {
         this.link = onError(({
             graphQLErrors,
