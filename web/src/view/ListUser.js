@@ -52,7 +52,7 @@ class UserItem extends React.Component {
   onUpdate = async ({ item }) => {
     const { client } = this.props
     const { isOffline } = this.state
-    const variables = { name: `${item.name}_${Utils.generateId(1)}`, dateOfBirth: new moment(), id: item.id }
+    const variables = { name: `${item.name}_${Utils.generateId(1)}`, dateOfBirth: new moment(), id: item.id, version: item.version+1 }
 
     //use the variable input as the value of optimisticResponse added on the props
 
@@ -86,7 +86,7 @@ class UserItem extends React.Component {
 
   onDelete = async ({ item }) => {
     const { client } = this.props
-    const variables = { id: item.id }
+    const variables = { id: item.id, version: item.version }
     this.setState({ loading: true })
     await client.mutate({ mutation: DELETE_USER, variables })
     this.setState({ loading: false })
@@ -94,10 +94,8 @@ class UserItem extends React.Component {
 
 
   render() {
-
     const { item } = this.props
     const { loading } = this.state
-
     return (
       <tr>
         <td>{item.name}</td>

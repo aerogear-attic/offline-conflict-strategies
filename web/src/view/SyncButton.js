@@ -1,7 +1,7 @@
 import React from 'react'
 import {Button} from 'react-bootstrap'
 import {withApollo} from 'react-apollo'
-import {SyncOfflineMutation} from '../mutations/SyncOfflineMutation'
+import {SyncOfflineMutation} from '../sdk/mutations/SyncOfflineMutation'
 
 export class SyncButton extends React.Component {
 
