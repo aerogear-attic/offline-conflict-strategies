@@ -2,8 +2,8 @@ const { GraphQLError } = require('graphql')
 
 // TODO move to enum
 const prefix = "AgSync:"
-export const CONFLICT_TYPE = prefix + "DataConflict"
-export const VALIDATION_TYPE = prefix + "Validation"
+const CONFLICT_TYPE = prefix + "DataConflict"
+const VALIDATION_TYPE = prefix + "Validation"
 
 /**
  * Represents server side error 
