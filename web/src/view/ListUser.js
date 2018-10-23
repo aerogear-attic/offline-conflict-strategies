@@ -52,7 +52,7 @@ class UserItem extends React.Component {
   onUpdate = async ({ item }) => {
     const { client } = this.props
     const { isOffline } = this.state
-    const variables = { name: `${item.name}_${Utils.generateId(1)}`, dateOfBirth: new moment(), id: item.id, version: item.version+1 }
+    const variables = { name: `${item.name}_${Utils.generateId(1)}`, dateOfBirth: new moment(), id: item.id, version: this.incrementVersion(item.version) }
 
     //use the variable input as the value of optimisticResponse added on the props
 
@@ -81,6 +81,10 @@ class UserItem extends React.Component {
         this.setState({ loading: false })
       }
     }
+  }
+
+  incrementVersion = (version) => {
+    return version+1
   }
 
 
