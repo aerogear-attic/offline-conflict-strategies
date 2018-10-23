@@ -1,12 +1,14 @@
 const { ApolloServer, gql } = require('apollo-server');
 const { GraphQLError } = require('graphql')
 
-class ConflictError extends GraphQLError {
-    constructor(data){
-        const message = "conflict has occured"
+class SyncServerError extends GraphQLError {
+    constructor(message, data, type){
+        const prefix= "AgSync:"
         super(message)
+        this.type = prefix + type || prefix+ "generic"
         this.data = data
         this.version = data.version
+        console.dir(this);
     }
 }
 
@@ -99,7 +101,7 @@ Query: {
         return value
         }
     }
-    throw new Error(`Couldn't find feedback with id ${id}`)
+    throw new SyncServerError(`Couldn't find feedback with id ${id}`)
     },
     getUser: (obj, args, context, info) => {
     for (let value of users) {
@@ -107,7 +109,7 @@ Query: {
         return value
         }
     }
-    throw new Error(`Couldn't find user with id ${id}`)
+    throw new SyncServerError(`Couldn't find user with id ${id}`)
     }
 },
 
@@ -121,16 +123,17 @@ Mutation: {
     updateUser: (obj, args, context, info) => {
         for (let user of users) {
             if (args.id == user.id) {
-                if(conflictDetected(user.version, args.version)){
+                //if(conflictDetected(user.version, args.version)){
                     // TODO add some logic to refetch if online
-                    console.log("CONFLICT DETECTED")
-                    throw new ConflictError(args)
-                }
-                user.name = args.name
-                user.feedback = args.feedback
-                user.dateOfBirth = args.dateOfBirth
-                user.version = args.version
-                return user
+                    console.warn(`Conflict detected. Server: ${user} client: ${args}`)
+                    throw new SyncServerError("Conflict when saving data",user, "DataConflict")
+                //}
+                // console.log(`Updating user: ${args}`)
+                // user.name = args.name
+                // user.feedback = args.feedback
+                // user.dateOfBirth = args.dateOfBirth
+                // user.version = args.version
+                // return user
             }
         }
     },
