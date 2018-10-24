@@ -84,13 +84,13 @@ class UserItem extends React.Component {
   }
 
   incrementVersion = (version) => {
-    return version+1
+    return version + 1
   }
 
 
   onDelete = async ({ item }) => {
     const { client } = this.props
-    const variables = { id: item.id, version: item.version }
+    const variables = { id: item.id }
     this.setState({ loading: true })
     await client.mutate({ mutation: DELETE_USER, variables })
     this.setState({ loading: false })
