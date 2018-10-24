@@ -3,7 +3,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
 import { ApolloLink } from 'apollo-link'
 import { persistCache } from 'apollo-cache-persist'
-import { conflictLink, networkLink, retryOnErrorLink } from './links'
+import { conflictLink, networkLink, retryOnErrorLink, retryOnConflictLink } from './links'
 
 // We may use Apollo Boost at later stage to replace this setup
 
@@ -21,7 +21,7 @@ export const setupApolloClient = async () => {
   const offlineLink = new QueueMutationLink({ storage })
   const httpLink = new HttpLink({ uri })
 
-  const link = ApolloLink.from([offlineLink, conflictLink(), networkLink(), retryOnErrorLink(), httpLink])
+  const link = ApolloLink.from([offlineLink, conflictLink(), retryOnConflictLink(), networkLink(), retryOnErrorLink(), httpLink])
 
   const cache = new InMemoryCache({
     // Use id as object for cache

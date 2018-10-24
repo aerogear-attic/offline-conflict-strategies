@@ -1,5 +1,6 @@
 const { ApolloServer, gql } = require('apollo-server');
 const { SyncServerError, detectConflict } = require('./sdk/ConflictSupport')
+const moment = require('moment')
 
 const feedback = [
     {
@@ -20,25 +21,25 @@ const users = [
     {
         id: 1,
         name: 'Stephen',
-        dateOfBirth: '2018-10-15T14:52:31.888Z',
+        dateOfBirth: new moment().toString(),
         version: 1
     },
     {
         id: 2,
         name: 'Wojciech',
-        dateOfBirth: '2014-10-15T14:52:38.376Z',
+        dateOfBirth: new moment().toString(),
         version: 1
     },
     {
         id: 3,
         name: 'Passos',
-        dateOfBirth: '2018-10-15T17:42:38.376Z',
+        dateOfBirth: new moment().toString(),
         version: 1
     },
     {
         id: 4,
         name: 'Dara',
-        dateOfBirth: '2015-10-15T09:51:18.376Z',
+        dateOfBirth: new moment().toString(),
         version: 1
     }
 ]
@@ -59,6 +60,7 @@ type User {
     feedback: [Feedback]
     version: Int!
 }
+
 type Query {
     allFeedbacks: [Feedback],
     getFeedback(id: Int!): Feedback,
