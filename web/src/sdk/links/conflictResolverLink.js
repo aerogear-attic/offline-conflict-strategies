@@ -14,7 +14,6 @@ export const retryOnConflictLink = (numOfAttempts, firstAttemptAfter) => (
         operation: ${operationType},
         error: ${error}
       }`);
-      debugger
       return (isMutation && (count <= numOfAttempts || 5));
     }
   })

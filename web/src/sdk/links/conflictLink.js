@@ -3,7 +3,6 @@ import merge from "deepmerge";
 
 export const conflictLink = () => (
   onError(({graphQLErrors, networkError, operation, forward}) => {
-    debugger
     if (graphQLErrors) {
       for (let err of graphQLErrors) {
         if(err.extensions && err.extensions.exception){
