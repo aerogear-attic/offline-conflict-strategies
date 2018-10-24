@@ -23,7 +23,10 @@ export const setupApolloClient = async () => {
 
   const link = ApolloLink.from([offlineLink, conflictLink(), networkLink(), retryOnErrorLink(), httpLink])
 
-  const cache = new InMemoryCache()
+  const cache = new InMemoryCache({
+    // Use id as object for cache
+    dataIdFromObject: object => object.id
+  });
   const apolloClient = new ApolloClient({ link, cache })
   await persistCache({
     cache,
