@@ -14,9 +14,9 @@ export const setupApolloClient = async () => {
   const storage = window.localStorage
 
   // Local server
-  const uri = `http://localhost:4000/graphql`
+  // const uri = `http://localhost:4000/graphql`
   // Graph.cool for testing
-  //const uri = `https://api.graph.cool/simple/v1/cjmltohxn3phc0173w5w6p659`
+  const uri = `https://api.graph.cool/simple/v1/cjmltohxn3phc0173w5w6p659`
 
   const offlineLink = new QueueMutationLink({ storage })
   const httpLink = new HttpLink({ uri })
