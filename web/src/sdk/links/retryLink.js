@@ -1,17 +1,20 @@
 import {RetryLink} from "apollo-link-retry";
+import { getOperationDefinition } from "apollo-utilities";
 
 export const retryOnErrorLink = (numOfAttempts, firstAttempAfter) => (
   new RetryLink({
     delay: {initial: firstAttempAfter || 1000},
     attempts: (count, operation, error) => {
-      console.log(`retryOnErrorLink: {      
+      const { operation: operationType } = getOperationDefinition(operation.query);
+      const isMutation = operationType === 'mutation';
+      console.info(`retryOnErrorLink: {      
         numOfAttempts: ${count}, 
         firstAttempAfter: ${firstAttempAfter},
         count: ${count},
-        operation: ${operation},
+        operation: ${operationType},
         error: ${error}
       }`);
-      return (count <= numOfAttempts || 5);
+      return (isMutation && (count <= numOfAttempts || 5));
     }
   })
 );
