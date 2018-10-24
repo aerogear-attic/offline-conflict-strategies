@@ -24,8 +24,8 @@ export const GET_USERS = gql`
 `
 
 export const DELETE_USER = gql`
-mutation deleteUser($id: ID!, $version: Int!){
-  deleteUser(id: $id, version: $version){
+mutation deleteUser($id: ID!){
+  deleteUser(id: $id){
     id
     name
     dateOfBirth

@@ -23,7 +23,6 @@ const setOptimisticResponse = ({ name, dateOfBirth }) => {
       id,
       name,
       dateOfBirth: `${dateOfBirth}`,
-      version: 1
     }
   }
 
@@ -43,7 +42,7 @@ export class AddUser extends React.Component {
           {(createUser) => {
             return (
               <Button bsStyle="primary" onClick={() => {
-                createUser({ variables: { name: this.state.name, dateOfBirth: this.state.dateOfBirth, version: 1 } })
+                createUser({ variables: { name: this.state.name, dateOfBirth: this.state.dateOfBirth } })
                 const ctr = this.state.counter + 1
                 this.setState({ name: `User ${ctr}`, dateOfBirth: new Date(), counter: ctr })
               }}>Add new</Button>
