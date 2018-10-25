@@ -46,7 +46,7 @@ type Query {
 
 type Mutation {
     createUser(name: String!, dateOfBirth: String!): User
-    updateUser(id: ID!, name: String, dateOfBirth: String, expectedVersion: Int!): User
+    updateUser(id: ID!, name: String, dateOfBirth: String, version: Int!): User
     deleteUser(id: ID!): User
 }
 `
@@ -84,7 +84,7 @@ const resolvers = {
                     console.log(`Updating user: ${args}`)
                     user.name = args.name
                     user.dateOfBirth = args.dateOfBirth
-                    user.version = args.expectedVersion
+                    user.version = args.version
                     return user
                 }
             }
