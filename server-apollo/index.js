@@ -67,9 +67,9 @@ type Query {
 }
 
 type Mutation {
-    createUser(name: String!, dateOfBirth: String!, version: Int!): User
+    createUser(name: String!, dateOfBirth: String!): User
     updateUser(id: ID!, name: String, dateOfBirth: String, version: Int!): User
-    deleteUser(id: ID!, version: Int!): User
+    deleteUser(id: ID!): User
     deleteFeedback(id: ID!): Feedback
     createFeedback(text: String!, votes: Int!, author: ID!): Feedback
     updateFeedback(id: ID!, text: String, votes: Int, author: ID!): Feedback
