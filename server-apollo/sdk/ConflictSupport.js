@@ -6,7 +6,7 @@ const CONFLICT_TYPE = prefix + "DataConflict"
 const VALIDATION_TYPE = prefix + "Validation"
 
 /**
- * Represents server side error 
+ * Represents server side error
  */
 class SyncServerError extends GraphQLError {
     constructor(message, data, type) {
@@ -20,8 +20,8 @@ class SyncServerError extends GraphQLError {
 // Default strategy for conflict resolution
 // Method accept server and client and return true if conflict detected
 const defaultConflictDetection = (server, client) => {
-    if (server.version && client.version) {
-        if (server.version >= client.version) {
+    if (server.version && client.expectedVersion) {
+        if (server.version !== client.expectedVersion) {
             return new SyncServerError("Conflict when saving data", server, CONFLICT_TYPE)
         }
     } else {
