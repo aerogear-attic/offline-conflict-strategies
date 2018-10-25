@@ -23,6 +23,7 @@ const setOptimisticResponse = ({ name, dateOfBirth }) => {
       id,
       name,
       dateOfBirth: `${dateOfBirth}`,
+      version: 1
     }
   }
 
