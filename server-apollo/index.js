@@ -1,158 +1,58 @@
-const { ApolloServer, gql } = require('apollo-server');
-const { SyncServerError, detectConflict } = require('./sdk/ConflictSupport')
-const moment = require('moment')
+const express = require('express')
+const fs = require('fs')
+const path = require('path')
 
-const users = [
-    {
-        id: 1,
-        name: 'Stephen',
-        dateOfBirth: new moment().toString(),
-        version: 1
-    },
-    {
-        id: 2,
-        name: 'Wojciech',
-        dateOfBirth: new moment().toString(),
-        version: 1
-    },
-    {
-        id: 3,
-        name: 'Passos',
-        dateOfBirth: new moment().toString(),
-        version: 1
-    },
-    {
-        id: 4,
-        name: 'Dara',
-        dateOfBirth: new moment().toString(),
-        version: 1
-    }
-]
+const { ApolloServer } = require('apollo-server-express')
+const { detectConflict, conflictResolvers } = require('./sdk')
 
-// Schema
-const typeDefs = gql`
+const connect = require('./db')
+const schema = require('./schema')
 
-type User {
-    id: ID!
-    name: String!
-    dateOfBirth: String!
-    version: Int!
+const dbOptions = {
+  database: process.env.POSTGRES_DATABASE || 'users',
+  user: process.env.POSTGRES_USERNAME || 'postgresql',
+  password: process.env.POSTGRES_PASSWORD || 'postgres',
+  host: process.env.POSTGRES_HOST || '127.0.0.1',
+  port: process.env.POSTGRES_PORT || '5432'
 }
 
-type Query {
-    allUsers: [User],
-    getUser(id: Int!): User
-}
+const PORT = 4000
 
-type Mutation {
-    createUser(name: String!, dateOfBirth: String!): User
-    updateUser(id: ID!, name: String, dateOfBirth: String, version: Int!): User
-    deleteUser(id: ID!): User
-}
-`
+async function start () {
+  // connect to db
+  const db = await connect(dbOptions)
+  const app = express()
 
-// Resolvers define the technique for fetching the types in the
-// schema.
-const resolvers = {
-    Query: {
-        allUsers: () => users,
-        getUser: (obj, args, context, info) => {
-            for (let value of users) {
-                if (args.id == value.id) {
-                    return value
-                }
-            }
-            throw new SyncServerError(`Couldn't find user with id ${id}`)
-        }
+  const apolloServer = new ApolloServer({
+    schema,
+    context: async ({ req }) => {
+      // pass request + db ref into context for each resolver
+      return {
+        req: req,
+        db: db,
+        detectConflict,
+        conflicts: conflictResolvers
+      }
     },
-
-    Mutation: {
-        createUser: (obj, args, context, info) => {
-            args.id = new Date().getTime()
-            args.version = 1
-            users.push(args)
-            return args
-        },
-        updateUser: (obj, args, context, info) => {
-            for (let user of users) {
-                if (args.id == user.id) {
-                    const conflict = detectConflict(user, args);
-                    if (conflict) {
-                        console.warn(`Conflict detected. Server: ${user} client: ${args}`)
-                        throw conflict;
-                    }
-                    console.log(`Updating user: ${args}`)
-                    user.name = args.name
-                    user.dateOfBirth = args.dateOfBirth
-                    user.version = args.version
-                    return user
-                }
-            }
-        },
-        deleteUser: (obj, args, context, info) => {
-            for (var i = 0; i < users.length; i++) {
-                if (args.id == users[i].id) {
-                    let returningUser = users[i]
-                    users.splice(i, 1)
-                    return returningUser
-                }
-            }
-            throw new Error(`Couldn't find user with id ${args.id}`)
-        }
-    }
-}
-
-const apolloServer = new ApolloServer({
-    typeDefs,
-    resolvers,
     playground: {
-        settings: {
-            'editor.theme': 'light',
-            'editor.cursorShape': 'block'
-        },
-        tabs: [{
-            responses: ['{}'],
-            query: `
-        query allUsers {
-            allUsers{
-                id
-                name
-            }
-    }
-
-
-    query getUser{
-        getUser(id: 1){
-            id
-            name
+      settings: {
+        'editor.theme': 'light',
+        'editor.cursorShape': 'block'
+      },
+      tabs: [
+        {
+          endpoint: `http://localhost:${PORT}/graphql`,
+          variables: JSON.stringify({}),
+          query: fs.readFileSync(path.resolve(__dirname, './playground.gql'), 'utf8')
         }
+      ]
     }
+  })
+  apolloServer.applyMiddleware({ app })
 
-    mutation createUser{
-        createUser(name: "SomeoneElse"){
-        id
-        name
-        }
-    }
+  app.listen(PORT, () => {
+    console.log(`🚀  Server ready at http://localhost:${PORT}/graphql`)
+  })
+}
 
-    mutation updateUser{
-        updateUser(id:1, name: "idiot"){
-            id
-            name
-        }
-    }
-
-    mutation deleteUser{
-        deleteUser(id:1){
-            id
-            name
-        }
-    }
-    `
-        }]
-    }
-})
-
-apolloServer.listen().then(({ url }) => {
-    console.log(`🚀  Server ready at ${url}`);
-});
+start()
