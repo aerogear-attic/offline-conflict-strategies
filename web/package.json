@@ -12,6 +12,7 @@
     "apollo-link-queue": "^2.1.0",
     "apollo-link-retry": "^2.2.5",
     "apollo-utilities": "^1.0.23",
+    "deepmerge": "^2.2.1",
     "graphql": "^0.13.2",
     "graphql-tag": "^2.9.2",
     "moment": "^2.22.2",

@@ -9,8 +9,8 @@ export const retryOnErrorLink = (numOfAttempts = 5, firstAttempAfter = 2000) => 
       const isMutation = operationType === 'mutation';
       if(!isMutation) { return }
       console.info(`retryOnErrorLink: {
-        firedAt: ${new Date()},      
-        numOfAttempts: ${numOfAttempts}, 
+        firedAt: ${new Date()},
+        numOfAttempts: ${numOfAttempts},
         firstAttempAfter: ${firstAttempAfter},
         count: ${count},
         operation: ${operationType},

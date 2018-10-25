@@ -48,11 +48,21 @@ class UserItem extends React.Component {
     window.addEventListener('offline', () => this.setState({ isOffline: true }))
   }
 
+  updateList = (cache) => {
+    const { allUsers } = cache.readQuery({ query: GET_USERS })
+    cache.writeQuery({
+      query: GET_USERS,
+      data: {
+        allUsers: allUsers
+      }
+    })
+  }
+
 
   onUpdate = async ({ item }) => {
     const { client } = this.props
     const { isOffline } = this.state
-    const variables = { name: `${item.name}_${Utils.generateId(1)}`, dateOfBirth: new moment(), id: item.id, version: this.incrementVersion(item.version) }
+    const variables = { name: `${item.name}_${Utils.generateId(1)}`, dateOfBirth: new moment().toString(), id: item.id, version: item.version }
 
     //use the variable input as the value of optimisticResponse added on the props
 
@@ -65,7 +75,7 @@ class UserItem extends React.Component {
     }
     this.setState({ loading: true })
     if (isOffline) {
-      client.mutate({ mutation: UPDATE_USER, variables, optimisticResponse, errorPolicy: 'ignore' })
+      client.mutate({ mutation: UPDATE_USER, variables, optimisticResponse, errorPolicy: 'ignore', update: this.updateList })
       this.setState({ loading: false })
     }
     else {
