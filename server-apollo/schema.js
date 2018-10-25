@@ -26,7 +26,7 @@ type Query {
 type Mutation {
   createUser(name: String!, dateOfBirth: String!): User
   updateUser(id: ID!, name: String, dateOfBirth: String, version: Int!): User
-  deleteUser(id: ID!, version: Int!): User
+  deleteUser(id: ID!): User
   # deleteFeedback(id: ID!): Feedback
   # createFeedback(text: String!, votes: Int!, author: ID!): Feedback
   # updateFeedback(id: ID!, text: String, votes: Int, author: ID!): Feedback
@@ -55,16 +55,18 @@ const resolvers = {
       return result
     },
     updateUser: async (obj, args, context, info) => {
+      let { id, version, ...updateArgs } = args
       const currentRecord = await context.db('users').select().where('id', args.id).then((rows) => rows[0])
       if (!currentRecord) return null // or not found error??
 
       const conflict = context.detectConflict(currentRecord, args) // detect conflict
+      
       if (conflict) {
-        return context.conflicts.default(conflict, currentRecord, args) //resolve conflict
+        const resolvedResult = context.handleConflict(context.conflictHandlers.MERGE_CLIENT_ONTO_SERVER, conflict, currentRecord, args) //resolve conflict
+        updateArgs = resolvedResult
       }
 
-      const { id, version, ...updateArgs } = args
-      const result = await context.db('users').update({ ...updateArgs, version: version + 1 }).where({'id': id }).returning('*').then((rows) => rows[0])
+      const result = await context.db('users').update({ ...updateArgs, version: currentRecord.version + 1 }).where({'id': id }).returning('*').then((rows) => rows[0])
       return result
     },
     deleteUser: async (obj, args, context, info) => {

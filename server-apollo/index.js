@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 
 const { ApolloServer } = require('apollo-server-express')
-const { detectConflict, conflictResolvers } = require('./sdk')
+const { handleConflict, detectConflict, conflictHandlers } = require('./sdk')
 
 const connect = require('./db')
 const schema = require('./schema')
@@ -31,7 +31,8 @@ async function start () {
         req: req,
         db: db,
         detectConflict,
-        conflicts: conflictResolvers
+        handleConflict,
+        conflictHandlers
       }
     },
     playground: {
