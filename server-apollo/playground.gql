@@ -1,0 +1,40 @@
+# Try to write your query here
+mutation createUser {
+  createUser(name: "Alice" dateOfBirth: "test") {
+    id
+    name
+    dateOfBirth
+  }
+}
+
+mutation updateUser {
+  updateUser(id: "1", name: "Alice", version: 1) {
+    name
+    id
+    version
+  }
+}
+
+mutation deleteUser {
+  deleteUser(id: "1", version: 1) {
+    name
+    id
+  }
+}
+
+query getUser {
+  getUser(id: "1") {
+    id
+    name
+    dateOfBirth
+  }
+}
+
+query allUsers {
+  allUsers{
+    id
+    name
+    dateOfBirth
+    version
+  }
+}

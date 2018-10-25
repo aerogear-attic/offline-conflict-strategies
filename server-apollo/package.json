@@ -4,15 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node_modules/nodemon/bin/nodemon.js index.js",
+    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "apollo-server": "^2.1.0",
+    "apollo-server-express": "^2.1.0",
+    "deepmerge": "^2.2.1",
+    "express": "^4.16.4",
     "graphql": "^14.0.2",
-    "moment": "^2.22.2",
-    "nodemon": "^1.18.4"
+    "graphql-resolvers": "^0.2.2",
+    "graphql-tools": "^4.0.2",
+    "knex": "^0.15.2",
+    "nodemon": "^1.18.4",
+    "pg": "^7.5.0"
   }
 }
