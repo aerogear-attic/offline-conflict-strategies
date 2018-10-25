@@ -87,12 +87,25 @@ class UserItem extends React.Component {
     return version + 1
   }
 
+  updateDelete = (cache, { data: { deleteUser } }) => {
+    const { allUsers } = cache.readQuery({ query: GET_USERS })
+    const newUsers = allUsers.filter((user) => {
+      return deleteUser.id !== user.id
+    });
+    cache.writeQuery({
+      query: GET_USERS,
+      data: {
+        allUsers: newUsers
+      }
+    })
+  }
+
 
   onDelete = async ({ item }) => {
     const { client } = this.props
     const variables = { id: item.id }
     this.setState({ loading: true })
-    await client.mutate({ mutation: DELETE_USER, variables })
+    await client.mutate({ mutation: DELETE_USER, variables, update: this.updateDelete })
     this.setState({ loading: false })
   }
 
