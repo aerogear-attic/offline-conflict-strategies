@@ -43,7 +43,7 @@ class App extends Component {
           <div className="container">
             <SyncButton/>
             <AddUser/>
-            <ListUser/>
+            <ListUser first="3"/>
           </div>
 
         </React.Fragment>

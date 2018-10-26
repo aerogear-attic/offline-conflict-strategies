@@ -10,7 +10,7 @@ export const generateId = (length = 8) => {
     return result
 }
 
-export const createNewOptimisticResponse = ({ operation, type, fields }) => {
+export const createNewOptimisticResponse = (operation, type, fields) => {
     const optimisticResponse = {
         __typename: 'Mutation',
     }
