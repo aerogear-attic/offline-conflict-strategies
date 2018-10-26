@@ -11,7 +11,7 @@ const update = (cache, { data: { createUser } }) => {
     data: { allUsers: allUsers.concat([createUser]) }
   })
 }
-const setOptimisticResponse = (query, data) => {
+const setOptimisticResponse = (data) => {
   return createNewOptimisticResponse("createUser", "User", data)
 }
 
@@ -22,7 +22,7 @@ export class AddUser extends React.Component {
   render() {
     return (
       <div style={{ "marginTop": "10px", "marginBottom": "10px" }}>
-        <Mutation mutation={ADD_USER} update={update} 
+        <Mutation mutation={ADD_USER} update={update}
                   optimisticResponse={setOptimisticResponse(this.state)}>
           {(createUser) => {
             return (
