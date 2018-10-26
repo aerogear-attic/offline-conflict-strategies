@@ -1,40 +1,59 @@
 import React from 'react'
 import { Query } from 'react-apollo'
-import { Button, ButtonGroup, Table } from 'react-bootstrap'
+import { Button, ButtonToolbar, ButtonGroup, Table } from 'react-bootstrap'
 import moment from 'moment'
 import { Utils } from 'pcmli.umbrella.uni-core'
 import { withApollo } from 'react-apollo'
 
 import { GET_USERS, DELETE_USER, UPDATE_USER } from '../queries'
 
-export const ListUser = () => {
-  return (
-    <Query query={GET_USERS} fetchPolicy="cache-and-network" errorPolicy="all">
-      {({ networkStatus, refetch, loading, error, data = {} }) => {
+export class ListUser extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { first: Number(props.first) };
 
-        const { allUsers = [] } = data
-        if (error && networkStatus === 8) console.info("Network error. Using cached data", allUsers)
+    // This binding is necessary to make `this` work in the callback
+    this.handleLoadMore = this.handleLoadMore.bind(this);
+  }
 
-        return (
-          <div>
-            <Table striped bordered condensed hover>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Date</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {allUsers.map((item, key) => <UserItem key={key}  {...{ item }} />)}
-              </tbody>
-            </Table>
-            <Button bsStyle="success" onClick={() => refetch()}>Refresh</Button>
-          </div>
-        )
-      }}
-    </Query>
-  )
+  handleLoadMore() {
+    this.setState(state => ({
+      first: state.first * 2
+    }));
+  }
+
+  render() {
+    return (
+      <Query query={GET_USERS} variables={{ first: this.state.first }} fetchPolicy="cache-and-network" errorPolicy="all">
+        {({ networkStatus, refetch, error, data = {} }) => {
+
+          const { allUsers = [] } = data
+          if (error && networkStatus === 8) console.info("Network error. Using cached data", allUsers)
+
+          return (
+            <div>
+              <Table striped bordered condensed hover>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {allUsers.map((item, key) => <UserItem key={key}  {...{ item }} />)}
+                </tbody>
+              </Table>
+              <ButtonToolbar>
+                <Button bsStyle="success" onClick={() => refetch()}>Refresh</Button>
+                <Button bsStyle="info" onClick={() => this.handleLoadMore()}>Load more</Button>
+              </ButtonToolbar>
+            </div>
+          )
+        }}
+      </Query>
+    )
+  }
 }
 
 class UserItem extends React.Component {

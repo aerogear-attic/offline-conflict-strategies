@@ -13,8 +13,8 @@ mutation createUser($dateOfBirth: String!, $name: String!){
 
 
 export const GET_USERS = gql`
-  query allUsers {
-    allUsers{
+  query allUsers($first: Int) {
+    allUsers(first: $first){
       id
       name
       dateOfBirth
@@ -45,12 +45,3 @@ mutation updateUser($dateOfBirth: String, $id: ID!, $name: String, $version: Int
 }
 `
 
-export const generateId = (length = 8) => {
-  let result = ''
-  const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-
-  for (let i = length; i > 0; i -= 1) {
-    result += chars[Math.floor(Math.random() * chars.length)]
-  }
-  return result
-}
