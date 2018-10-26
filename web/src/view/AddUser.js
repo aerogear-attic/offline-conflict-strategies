@@ -24,7 +24,7 @@ export class AddUser extends React.Component {
 
   render() {
     return (
-      <div>
+      <div style={{ "margin-top": "10px", "margin-bottom": "10px" }}>
         <Mutation mutation={ADD_USER} update={update} optimisticResponse={setOptimisticResponse({ ADD_USER }, this.state)}>
           {(createUser) => {
             return (

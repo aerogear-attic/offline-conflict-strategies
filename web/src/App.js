@@ -2,10 +2,8 @@ import React, {Component} from 'react'
 import logo from './logo.svg'
 import './App.css'
 import {ApolloProvider} from 'react-apollo'
-import {AddUser} from './view/AddUser'
 import {ListUser} from './view/ListUser'
-import { SyncButton } from './view/SyncButton'
-
+import {AddUser} from './view/AddUser'
 import {setupApolloClient} from './sdk/apolloClient'
 import {SyncOfflineMutation} from './sdk/mutations/SyncOfflineMutation'
 
@@ -36,14 +34,17 @@ class App extends Component {
 
           <div className="App">
             <header className="App-header">
-              <img src={logo} className="App-logo" alt="logo"/>
-              <h1 className="App-title">Welcome to React</h1>
+              <h1 className="App-title">AeroGear Sync Offline</h1>
             </header>
           </div>
           <div className="container">
-            <SyncButton/>
+            {/* <SyncButton/> */}
             <AddUser/>
             <ListUser first="3"/>
+            <div>
+             
+            </div>
+            
           </div>
 
         </React.Fragment>
