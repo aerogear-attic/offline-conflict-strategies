@@ -12,7 +12,6 @@ export class SyncButton extends React.Component {
     await this.syncOfflineMutation.init()
   }
 
-
   sync = async () => {
     if(this.syncOfflineMutation.hasOfflineData()){
       await this.syncOfflineMutation.sync()

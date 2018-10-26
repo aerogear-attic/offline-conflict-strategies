@@ -1,3 +1,4 @@
+
 export let ID_FIELD = "id";
 
 export const generateId = (length = 8) => {
@@ -10,6 +11,8 @@ export const generateId = (length = 8) => {
     return result
 }
 
+
+
 export const createNewOptimisticResponse = (operation, type, fields) => {
     const optimisticResponse = {
         __typename: 'Mutation',
@@ -18,8 +21,9 @@ export const createNewOptimisticResponse = (operation, type, fields) => {
     optimisticResponse[operation] = {
         __typename: type,
         ...fields,
-        version: 1
+        version: 1,
+        optimisticResponse: true
     };
-    optimisticResponse[operation][ID_FIELD] = - generateId();
+    optimisticResponse[operation][ID_FIELD] = generateId();
     return optimisticResponse;
 }
