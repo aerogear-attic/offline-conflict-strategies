@@ -4,34 +4,23 @@ const { GraphQLNonNull } = require('graphql')
 const { combineResolvers, pipeResolvers } = require('graphql-resolvers')
 
 const typeDefs = gql`
-# type Feedback {
-#   id: ID!
-#   text: String!
-#   votes: Int!
-#   author: User!
-# }
 type User {
   id: ID!
   name: String!
   dateOfBirth: String!
   version: Int
-  # feedback: [Feedback]
 }
+
 type Query {
-  # allFeedbacks: [Feedback],
-  # getFeedback(id: Int!): Feedback,
   allUsers: [User],
+  allUsersPaginated(first: Int): [User],
   getUser(id: ID!): User
 }
+
 type Mutation {
   createUser(name: String!, dateOfBirth: String!): User
   updateUser(id: ID!, name: String, dateOfBirth: String, version: Int!): User
   deleteUser(id: ID!): User
-  # deleteFeedback(id: ID!): Feedback
-  # createFeedback(text: String!, votes: Int!, author: ID!): Feedback
-  # updateFeedback(id: ID!, text: String, votes: Int, author: ID!): Feedback
-  ## Increment counter for specific feedback
-  # vote(id: ID!, userId: ID!): Feedback
 }
 `
 
@@ -39,6 +28,10 @@ type Mutation {
 // schema.
 const resolvers = {
   Query: {
+    allUsers: async (obj, args, context) => {
+      const result = await context.db.select().from('users')
+      return result
+    },
     allUsers: async (obj, args, context) => {
       const result = await context.db.select().from('users')
       return result
@@ -62,7 +55,7 @@ const resolvers = {
       const conflict = context.detectConflict(currentRecord, args) // detect conflict
       
       if (conflict) {
-        const resolvedResult = context.handleConflict(context.conflictHandlers.RETURN_TO_CLIENT, conflict, currentRecord, args) //resolve conflict
+        const resolvedResult = context.handleConflict(context.conflictHandlers.RETURN_TO_CLIENT, conflict, currentRecord, args) 
       }
 
       const result = await context.db('users').update({ ...updateArgs, version: currentRecord.version + 1 }).where({'id': id }).returning('*').then((rows) => rows[0])
@@ -76,33 +69,5 @@ const resolvers = {
 }
 
 const schema = makeExecutableSchema({ typeDefs, resolvers })
-
-// ignore all this :)
-
-// function detectConflicts (obj, args, context, info) {
-//   console.log('checking for conflicts first')
-//   return 'ok'
-// }
-
-// function mutationAcceptsVersionArgument(mutation) {
-//   return mutation.args.some((arg) => {
-//     // arg.type is a slightly different shape if it's a GraphQLNonNull instance
-//     const type = (arg.type instanceof GraphQLNonNull) ? arg.type.ofType.name : arg.type.name
-
-//     if (arg.name !== 'version') return false
-//     if (arg.name === 'version' && type === 'Int') return true
-//     if (arg.name === 'version' && type !== 'Int') throw new Error(`error in mutation ${mutation.name}: type ${type} is not allowed on version argument`)
-//   })
-// }
-
-// const mutationType = schema.getMutationType()
-// const fields = mutationType.getFields()
-
-// for (let key of Object.keys(fields)) {
-//   const mutation = fields[key]
-//   if (mutationAcceptsVersionArgument(mutation)) {
-//     mutation.resolve = pipeResolvers(detectConflicts, mutation.resolve)
-//   }
-// }
 
 module.exports = schema
