@@ -1,8 +1,8 @@
 import React from 'react'
 import { Mutation } from 'react-apollo'
 import { Button } from 'react-bootstrap'
-import { createNewOptimisticResponse } from '../sdk/optimisitcUIEnhancer'
-import { ADD_USER, GET_USERS, generateId } from '../queries'
+import { createNewOptimisticResponse, generateId } from '../sdk/optimisitcUIEnhancer'
+import { ADD_USER, GET_USERS,  } from '../queries'
 
 const update = (cache, { data: { createUser } }) => {
   const { allUsers } = cache.readQuery({ query: GET_USERS })
@@ -11,12 +11,9 @@ const update = (cache, { data: { createUser } }) => {
     data: { allUsers: allUsers.concat([createUser]) }
   })
 }
-
-
 const setOptimisticResponse = (query, data) => {
   return createNewOptimisticResponse("createUser", "User", data)
 }
-
 
 export class AddUser extends React.Component {
 
@@ -25,7 +22,8 @@ export class AddUser extends React.Component {
   render() {
     return (
       <div style={{ "marginTop": "10px", "marginBottom": "10px" }}>
-        <Mutation mutation={ADD_USER} update={update} optimisticResponse={setOptimisticResponse({ ADD_USER }, this.state)}>
+        <Mutation mutation={ADD_USER} update={update} 
+                  optimisticResponse={setOptimisticResponse(this.state)}>
           {(createUser) => {
             return (
               <Button bsStyle="primary" onClick={() => {

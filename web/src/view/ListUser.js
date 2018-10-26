@@ -24,7 +24,7 @@ export class ListUser extends React.Component {
 
   render() {
     return (
-      <Query query={GET_USERS} variables={{ first: this.state.first }} fetchPolicy="cache-and-network" errorPolicy="all">
+      <Query query={GET_USERS} fetchPolicy="cache-and-network" errorPolicy="all">
         {({ networkStatus, refetch, error, data = {} }) => {
 
           const { allUsers = [] } = data
