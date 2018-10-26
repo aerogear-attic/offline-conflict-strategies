@@ -12,8 +12,7 @@ type User {
 }
 
 type Query {
-  allUsers: [User],
-  allUsersPaginated(first: Int): [User],
+  allUsers(first: Int, after: String): [User],
   getUser(id: ID!): User
 }
 
@@ -29,11 +28,13 @@ type Mutation {
 const resolvers = {
   Query: {
     allUsers: async (obj, args, context) => {
-      const result = await context.db.select().from('users')
-      return result
-    },
-    allUsers: async (obj, args, context) => {
-      const result = await context.db.select().from('users')
+      const result = context.db.select().from('users')
+      if (args.first && args.after) {
+        result.limit(args.first)
+        result.offset(args.after)
+      } else if (args.first) {
+        result.limit(args.first)
+      }
       return result
     },
     getUser: async (obj, args, context, info) => {
@@ -53,12 +54,12 @@ const resolvers = {
       if (!currentRecord) return null // or not found error??
 
       const conflict = context.detectConflict(currentRecord, args) // detect conflict
-      
+
       if (conflict) {
-        const resolvedResult = context.handleConflict(context.conflictHandlers.RETURN_TO_CLIENT, conflict, currentRecord, args) 
+        const resolvedResult = context.handleConflict(context.conflictHandlers.RETURN_TO_CLIENT, conflict, currentRecord, args)
       }
 
-      const result = await context.db('users').update({ ...updateArgs, version: currentRecord.version + 1 }).where({'id': id }).returning('*').then((rows) => rows[0])
+      const result = await context.db('users').update({ ...updateArgs, version: currentRecord.version + 1 }).where({ 'id': id }).returning('*').then((rows) => rows[0])
       return result
     },
     deleteUser: async (obj, args, context, info) => {

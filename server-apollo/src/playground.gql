@@ -16,7 +16,7 @@ mutation updateUser {
 }
 
 mutation deleteUser {
-  deleteUser(id: "1", version: 1) {
+  deleteUser(id: "1") {
     name
     id
   }
@@ -27,6 +27,15 @@ query getUser {
     id
     name
     dateOfBirth
+  }
+}
+
+query allUsers {
+  allUsers{
+    id
+    name
+    dateOfBirth
+    version
   }
 }
 
