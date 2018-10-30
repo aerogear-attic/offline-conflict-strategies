@@ -2,6 +2,7 @@ const { gql } = require('apollo-server')
 const { makeExecutableSchema } = require('graphql-tools')
 const { GraphQLNonNull } = require('graphql')
 const { combineResolvers, pipeResolvers } = require('graphql-resolvers')
+const { pubSub, EVENTS } = require('./subscriptions')
 
 const typeDefs = gql`
 type User {
@@ -20,6 +21,10 @@ type Mutation {
   createUser(name: String!, dateOfBirth: String!): User
   updateUser(id: ID!, name: String, dateOfBirth: String, version: Int!): User
   deleteUser(id: ID!): User
+}
+
+type Subscription {
+  userCreated: User
 }
 `
 
@@ -46,6 +51,11 @@ const resolvers = {
   Mutation: {
     createUser: async (obj, args, context, info) => {
       const result = await context.db('users').insert({ ...args, version: 1 }).returning('*').then((rows) => rows[0])
+      // TODO context helper for publishing subscriptions in SDK?
+      console.log("result", result);
+      pubSub.publish(EVENTS.USER.CREATED, {
+        userCreated: result,
+      });
       return result
     },
     updateUser: async (obj, args, context, info) => {
@@ -66,7 +76,12 @@ const resolvers = {
       const result = await context.db('users').delete().where('id', args.id).returning('*').then((rows) => rows[0])
       return result
     }
-  }
+  },
+  Subscription: {
+    userCreated: {
+      subscribe: () => pubSub.asyncIterator(EVENTS.USER.CREATED),
+    },
+  },
 }
 
 const schema = makeExecutableSchema({ typeDefs, resolvers })

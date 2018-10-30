@@ -7,6 +7,7 @@ const { handleConflict, detectConflict, conflictHandlers } = require('./sdk')
 
 const connect = require('./db')
 const schema = require('./schema')
+const http = require('http');
 
 const dbOptions = {
   database: process.env.POSTGRES_DATABASE || 'users',
@@ -49,11 +50,17 @@ async function start () {
       ]
     }
   })
+  const httpServer = http.createServer(app);
+  apolloServer.installSubscriptionHandlers(httpServer)
   apolloServer.applyMiddleware({ app })
 
   app.listen(PORT, () => {
     console.log(`🚀  Server ready at http://localhost:${PORT}/graphql`)
   })
+
+  httpServer.listen({ port: 8001 }, () => {
+    console.log('Apollo Server on http://localhost:8001/graphql');
+  });
 }
 
 start()

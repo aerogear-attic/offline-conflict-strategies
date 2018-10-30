@@ -1,49 +1,44 @@
-# Try to write your query here
-mutation createUser {
-  createUser(name: "Alice" dateOfBirth: "test") {
+fragment UserFields on User { 
     id
     name
     dateOfBirth
+    version
+}
+
+
+mutation createUser {
+  createUser(name: "Alice" dateOfBirth: "test") {
+     ...UserFields
   }
 }
 
 mutation updateUser {
   updateUser(id: "1", name: "Alice", version: 1) {
-    name
-    id
-    version
+    ...UserFields
   }
 }
 
 mutation deleteUser {
   deleteUser(id: "1") {
-    name
     id
   }
 }
 
 query getUser {
   getUser(id: "1") {
-    id
-    name
-    dateOfBirth
+    ...UserFields
   }
 }
 
 query allUsers {
   allUsers{
-    id
-    name
-    dateOfBirth
-    version
+    ...UserFields
   }
 }
 
-query allUsers {
-  allUsers{
-    id
-    name
-    dateOfBirth
-    version
+subscription userSubscription{
+  userCreated{
+    ...UserFields
   }
 }
+
