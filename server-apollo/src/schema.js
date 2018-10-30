@@ -56,7 +56,7 @@ const resolvers = {
       const conflict = context.detectConflict(currentRecord, args) // detect conflict
 
       if (conflict) {
-        const resolvedResult = context.handleConflict(context.conflictHandlers.RETURN_TO_CLIENT, conflict, currentRecord, args)
+        updateArgs = context.handleConflict(context.conflictHandlers.RETURN_TO_CLIENT, conflict, currentRecord, args)
       }
 
       const result = await context.db('users').update({ ...updateArgs, version: currentRecord.version + 1 }).where({ 'id': id }).returning('*').then((rows) => rows[0])

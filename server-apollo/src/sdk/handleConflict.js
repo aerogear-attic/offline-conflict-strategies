@@ -1,28 +1,31 @@
 const merge = require('deepmerge')
 
-function RETURN_TO_CLIENT (conflict, currentRecord, args) {
-  console.warn(`Conflict detected. Server: ${currentRecord} client: ${args}`)
+function RETURN_TO_CLIENT (conflict, currentRecord, client) {
+  console.warn(`Conflict detected. Server: ${currentRecord} client: ${client}`)
   throw conflict
 }
 
 function CLIENT_WINS (conflict, currentRecord, client) {
+  console.warn(`Conflict detected. Server: ${currentRecord} client: ${client}`)
   const newVersion = currentRecord.version + 1
   const newRecord = { ...client, version: newVersion }
   return newRecord
 }
 
 function SERVER_WINS (conflict, currentRecord, client) {
-  console.warn(`Conflict detected. Server: ${currentRecord} client: ${args}`)
+  console.warn(`Conflict detected. Server: ${currentRecord} client: ${client}`)
   throw conflict
 }
 
 function MERGE_CLIENT_ONTO_SERVER (conflict, currentRecord, client) {
+  console.warn(`Conflict detected. Server: ${currentRecord} client: ${client}`)
   const newVersion = currentRecord.version + 1
   const newRecord = { ...merge(currentRecord, client), version: newVersion }
   return newRecord
 }
 
 function MERGE_SERVER_ONTO_CLIENT (conflict, currentRecord, client) {
+  console.warn(`Conflict detected. Server: ${currentRecord} client: ${client}`)
   const newVersion = currentRecord.version + 1
   const newRecord = merge(client, currentRecord)
   newRecord.version = newVersion
