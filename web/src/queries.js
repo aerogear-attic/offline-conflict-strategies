@@ -11,7 +11,6 @@ mutation createUser($dateOfBirth: String!, $name: String!){
   }
 `
 
-
 export const GET_USERS = gql`
   query allUsers($first: Int) {
     allUsers(first: $first){
@@ -45,3 +44,13 @@ mutation updateUser($dateOfBirth: String, $id: ID!, $name: String, $version: Int
 }
 `
 
+export const USER_SUBSCRIPTION = gql`
+  subscription userCreated {
+    userCreated {
+      id
+      name
+      dateOfBirth
+      version
+    }
+  }
+`;

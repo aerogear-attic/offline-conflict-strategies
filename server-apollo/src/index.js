@@ -54,12 +54,8 @@ async function start () {
   apolloServer.installSubscriptionHandlers(httpServer)
   apolloServer.applyMiddleware({ app })
 
-  app.listen(PORT, () => {
+  httpServer.listen({ port: PORT }, () => {
     console.log(`🚀  Server ready at http://localhost:${PORT}/graphql`)
-  })
-
-  httpServer.listen({ port: 8001 }, () => {
-    console.log('Apollo Server on http://localhost:8001/graphql');
   });
 }
 

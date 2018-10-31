@@ -5,11 +5,12 @@ import moment from 'moment'
 import { Utils } from 'pcmli.umbrella.uni-core'
 import { withApollo } from 'react-apollo'
 
-import { GET_USERS, DELETE_USER, UPDATE_USER } from '../queries'
+import { GET_USERS, USER_SUBSCRIPTION, DELETE_USER, UPDATE_USER } from '../queries'
 
 export class ListUser extends React.Component {
   constructor(props) {
     super(props);
+    this.subscribedToUserUpdates = false;
     this.state = { first: Number(props.first) };
 
     // This binding is necessary to make `this` work in the callback
@@ -22,10 +23,33 @@ export class ListUser extends React.Component {
     }));
   }
 
+  handleSubscribeForMore(subscribeToMore) {
+    if (!this.userUpdatesSubscription) {
+      this.userUpdatesSubscription = subscribeToMore({
+        document: USER_SUBSCRIPTION,
+        updateQuery: this.subscriptionUpdate,
+      })
+    } else {
+      // detect error and resubscribe if needed = UserUpdatesSubscription.catch()
+      console.log("Already subscribed to UserCreated updates.")
+    }
+  }
+
+  subscriptionUpdate(prev, data) {
+    console.log(prev, data)
+    if (!data || !data.subscriptionData || !data.subscriptionData.data) return prev;
+    if (prev.allUsers && Array.isArray(prev.allUsers)) {
+      const newItem = data.subscriptionData.data.userCreated;
+      prev.allUsers.push(newItem)
+      console.log("Added new item using subscription", newItem)
+    }
+    return prev;
+  }
+
   render() {
     return (
       <Query query={GET_USERS} fetchPolicy="cache-and-network" errorPolicy="all">
-        {({ networkStatus, refetch, error, data = {} }) => {
+        {({ networkStatus, subscribeToMore, refetch, error, data = {} }) => {
 
           const { allUsers = [] } = data
           if (error && networkStatus === 8) console.info("Network error. Using cached data", allUsers)
@@ -47,6 +71,7 @@ export class ListUser extends React.Component {
               <ButtonToolbar>
                 <Button bsStyle="success" onClick={() => refetch()}>Refresh</Button>
                 <Button bsStyle="info" onClick={() => this.handleLoadMore()}>Load more</Button>
+                <Button bsStyle="info" onClick={() => this.handleSubscribeForMore(subscribeToMore)}>Subscribe for more</Button>
               </ButtonToolbar>
             </div>
           )
@@ -76,7 +101,8 @@ class UserItem extends React.Component {
       }
     })
   }
-  
+
+
   onUpdate = async ({ item }) => {
     const { client } = this.props
     const { isOffline } = this.state
@@ -130,7 +156,6 @@ class UserItem extends React.Component {
       }
     })
   }
-
 
   onDelete = async ({ item }) => {
     const { client } = this.props
