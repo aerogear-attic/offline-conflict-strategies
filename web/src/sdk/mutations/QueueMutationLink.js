@@ -60,7 +60,7 @@ export class QueueMutationLink extends ApolloLink {
       query.definitions = definitions
       let operationName = query.definitions[0].name.value
       let objectID = variables.id
-      if (this.queue.length > 0) {
+      if (this.queue.length > 0 && objectID) {
         this.queue.forEach((element, index) => {
           if(element.mutation.definitions[0].name.value === operationName && element.variables.id === objectID){
               let newOperation = deepmerge(element, {mutation: query, variables})
