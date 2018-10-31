@@ -46,7 +46,7 @@ export class QueueMutationLink extends ApolloLink {
 
     }
   }
-  enqueue = (entry) => {
+  enqueue = async (entry) => {
     const item = {...entry}
     const {operation} = item
     const {query, variables} = operation || {}
@@ -58,22 +58,27 @@ export class QueueMutationLink extends ApolloLink {
     //store only if there are values for query.definitions
     if (definitions.length > 0) {
       query.definitions = definitions
-      let operationName = query.definitions[0].name.value
+      let operationName
+      if(query.definitions[0] && query.definitions[0].name){
+        operationName = query.definitions[0].name.value
+      }
       let objectID = variables.id
+      let added = false
       if (this.queue.length > 0 && objectID) {
-        this.queue.forEach((element, index) => {
+        await this.queue.forEach((element, index) => {
           if(element.mutation.definitions[0].name.value === operationName && element.variables.id === objectID){
+              added = true
               let newOperation = deepmerge(element, {mutation: query, variables})
               this.queue[index] = newOperation
               this.queue[index].mutation.definitions = definitions
               return
-          } else {
-            this.queue.push({mutation: query, variables})
           }
         });
-      } else {
-         this.queue.push({mutation: query, variables})
       }
+      if (!added){
+        this.queue.push({mutation: query, variables})
+      }
+
 
       //update the value of local storage
       this.storage.setItem(this.storeKey, JSON.stringify(this.queue))
