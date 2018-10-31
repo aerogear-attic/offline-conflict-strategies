@@ -1,5 +1,6 @@
 import {ApolloLink, Observable} from 'apollo-link'
 import {SyncOfflineMutation} from './SyncOfflineMutation'
+import deepmerge from 'deepmerge'
 
 export class QueueMutationLink extends ApolloLink {
   constructor({storage} = {}) {
@@ -57,7 +58,22 @@ export class QueueMutationLink extends ApolloLink {
     //store only if there are values for query.definitions
     if (definitions.length > 0) {
       query.definitions = definitions
-      this.queue.push({mutation: query, variables})
+      let operationName = query.definitions[0].name.value
+      let objectID = variables.id
+      if (this.queue.length > 0) {
+        this.queue.forEach((element, index) => {
+          if(element.mutation.definitions[0].name.value === operationName && element.variables.id === objectID){
+              let newOperation = deepmerge(element, {mutation: query, variables})
+              this.queue[index] = newOperation
+              this.queue[index].mutation.definitions = definitions
+              return
+          } else {
+            this.queue.push({mutation: query, variables})
+          }
+        });
+      } else {
+         this.queue.push({mutation: query, variables})
+      }
 
       //update the value of local storage
       this.storage.setItem(this.storeKey, JSON.stringify(this.queue))
