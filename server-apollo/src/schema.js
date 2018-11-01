@@ -59,18 +59,22 @@ const resolvers = {
       return result
     },
     updateUser: async (obj, args, context, info) => {
-      let { id, version, ...updateArgs } = args
-      const currentRecord = await context.db('users').select().where('id', args.id).then((rows) => rows[0])
-      if (!currentRecord) return null // or not found error??
+      return new Promise((resolve, reject) => {
+        context.db.transaction(async (trx) => {
+          let { id, version, ...updateArgs } = args
+          const currentRecord = await trx('users').select().where('id', args.id).then((rows) => rows[0])
+          if (!currentRecord) return null // or not found error??
 
-      const conflict = context.detectConflict(currentRecord, args) // detect conflict
+          const conflict = context.detectConflict(currentRecord, args) // detect conflict
 
-      if (conflict) {
-        updateArgs = context.handleConflict(context.conflictHandlers.RETURN_TO_CLIENT, conflict, currentRecord, args)
-      }
+          if (conflict) {
+            updateArgs = context.handleConflict(context.conflictHandlers.RETURN_TO_CLIENT, conflict, currentRecord, args)
+          }
 
-      const result = await context.db('users').update({ ...updateArgs, version: currentRecord.version + 1 }).where({ 'id': id }).returning('*').then((rows) => rows[0])
-      return result
+          const result = await trx('users').update({ ...updateArgs, version: currentRecord.version + 1 }).where({ 'id': id }).returning('*').then((rows) => rows[0])
+          resolve(result)
+        }).catch(reject)
+      })
     },
     deleteUser: async (obj, args, context, info) => {
       const result = await context.db('users').delete().where('id', args.id).returning('*').then((rows) => rows[0])
