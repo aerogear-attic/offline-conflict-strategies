@@ -76,8 +76,7 @@ class UserItem extends React.Component {
       }
     })
   }
-
-
+  
   onUpdate = async ({ item }) => {
     const { client } = this.props
     const { isOffline } = this.state
@@ -103,7 +102,10 @@ class UserItem extends React.Component {
           mutation: UPDATE_USER,
           variables,
           optimisticResponse,
-          errorPolicy: 'ignore'
+          errorPolicy: 'ignore',
+          refetchQueries: [{
+            query: GET_USERS
+          }]
         })
       }
       finally {
