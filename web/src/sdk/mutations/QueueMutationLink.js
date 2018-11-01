@@ -29,7 +29,7 @@ export class QueueMutationLink extends ApolloLink {
   }
   close = () => {
     this.isOpen = false
-  }
+  }`dataSourceMappings type not supported: ${type}`
   request = (operation, forward) => {
     if (this.isOpen) {
       return forward(operation)
