@@ -95,6 +95,7 @@ export class QueueMutationLink extends ApolloLink {
         this.queue.push({ mutation: query, variables });
       }
       else {
+        logger("Squashing offline operation", this.queue[index].variables, variables)
         // else if found, merge the variables
         let newOperationVariables = deepmerge(this.queue[index].variables, variables);
         this.queue[index].variables = newOperationVariables;
