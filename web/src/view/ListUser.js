@@ -147,7 +147,7 @@ class UserItem extends React.Component {
     return (
       <tr>
         <td>{item.name}</td>
-        <td>{moment(item.dateOfBirth).format('d-MMM-YYYY  h:mm:ss.S a')}</td>
+        <td>{item.dateOfBirth.toString()}</td>
         <td>
           <ButtonGroup>
             <Button bsStyle="warning" disabled={loading} onClick={() => this.onUpdate({ item })}>Update</Button>

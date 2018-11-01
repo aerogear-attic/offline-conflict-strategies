@@ -4,7 +4,6 @@ import { HttpLink } from 'apollo-link-http'
 import { ApolloLink } from 'apollo-link'
 import { persistCache } from 'apollo-cache-persist'
 import { conflictLink, networkLink, retryOnErrorLink } from './links'
-
 // We may use Apollo Boost at later stage to replace this setup
 
 import { QueueMutationLink } from '../sdk/mutations/QueueMutationLink'
