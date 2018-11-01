@@ -1,7 +1,7 @@
 import React from 'react'
 import { Mutation } from 'react-apollo'
 import { Button } from 'react-bootstrap'
-import { createNewOptimisticResponse, generateId } from '../sdk/optimisitcUIEnhancer'
+import { createNewOptimisticResponse } from '../sdk/optimisitcUIEnhancer'
 import { ADD_USER, GET_USERS,  } from '../queries'
 
 const update = (cache, { data: { createUser } }) => {
