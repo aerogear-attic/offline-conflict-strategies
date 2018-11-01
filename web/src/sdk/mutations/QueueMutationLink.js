@@ -32,7 +32,7 @@ export class QueueMutationLink extends ApolloLink {
   }
   close = () => {
     this.isOpen = false
-  }`dataSourceMappings type not supported: ${type}`
+  }
   request = (operation, forward) => {
     if (this.isOpen) {
       logger("Forward offline queue")
@@ -76,7 +76,7 @@ export class QueueMutationLink extends ApolloLink {
    * Merge offline operations that are made on the same object.
    * Equality of operation is done by checking operationName and object id.
    */
-  squashOperations(query, variables) {
+  squashOperations = (query, variables) => {
     let operationName
     if (query.definitions[0] && query.definitions[0].name) {
       operationName = query.definitions[0].name.value;
