@@ -76,7 +76,7 @@ export class QueueMutationLink extends ApolloLink {
    * Merge offline operations that are made on the same object.
    * Equality of operation is done by checking operationName and object id.
    */
-  squashOperations(query, operationName, variables) {
+  squashOperations(query, variables) {
     let operationName
     if (query.definitions[0] && query.definitions[0].name) {
       operationName = query.definitions[0].name.value;
@@ -85,9 +85,10 @@ export class QueueMutationLink extends ApolloLink {
     if (this.queue.length > 0 && objectID) {
       // find the index of the operation in the array matching the incoming one
       const index = this.queue.findIndex(entry => {
-        if (entry.mutation.definitions[0].name.value == operationName && entry.variables.id === objectID) {
+        if (entry.mutation.definitions[0].name.value === operationName && entry.variables.id === objectID) {
           return true;
         }
+        return false;
       });
       // if not found, add new operation directly
       if (index === -1) {
