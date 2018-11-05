@@ -39,6 +39,9 @@ const resolvers = {
         result.offset(args.after)
       } else if (args.first) {
         result.limit(args.first)
+      } else {
+        // Default limit
+        result.limit(5)
       }
       return result
     },
