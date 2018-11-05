@@ -7,20 +7,48 @@ import { withApollo } from 'react-apollo'
 
 import { GET_USERS, USER_SUBSCRIPTION, DELETE_USER, UPDATE_USER } from '../queries'
 
+export class ListUserTable extends React.Component {
+  render() {
+    return (
+      <Table striped bordered condensed hover>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {this.props.allUsers.map((item, key) => <UserItem key={key}  {...{ item }} />)}
+        </tbody>
+      </Table>
+    )
+  }
+}
+
 export class ListUser extends React.Component {
   constructor(props) {
     super(props);
-    this.subscribedToUserUpdates = false;
     this.state = { first: Number(props.first) };
-
     // This binding is necessary to make `this` work in the callback
     this.handleLoadMore = this.handleLoadMore.bind(this);
   }
 
-  handleLoadMore() {
+  handleLoadMore(fetchMore) {
     this.setState(state => ({
       first: state.first * 2
     }));
+    fetchMore({
+      variables: {
+        first: this.state.first
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return prev;
+        return Object.assign({}, prev, {
+          allUsers: [...prev.allUsers, ...fetchMoreResult.allUsers]
+        });
+      }
+    })
   }
 
   handleSubscribeForMore(subscribeToMore) {
@@ -35,11 +63,11 @@ export class ListUser extends React.Component {
     }
   }
 
-  subscriptionUpdate(prev, data) {
-    console.log(prev, data)
-    if (!data || !data.subscriptionData || !data.subscriptionData.data) return prev;
+  subscriptionUpdate(prev, { subscriptionData }) {
+    console.log(prev, subscriptionData)
+    if (!subscriptionData.data) return prev;
     if (prev.allUsers && Array.isArray(prev.allUsers)) {
-      const newItem = data.subscriptionData.data.userCreated;
+      const newItem = subscriptionData.data.userCreated;
       prev.allUsers.push(newItem)
       console.log("Added new item using subscription", newItem)
     }
@@ -49,28 +77,16 @@ export class ListUser extends React.Component {
   render() {
     return (
       <Query query={GET_USERS} fetchPolicy="cache-and-network" errorPolicy="all">
-        {({ networkStatus, subscribeToMore, refetch, error, data = {} }) => {
+        {({ networkStatus, subscribeToMore, fetchMore, refetch, error, data = {} }) => {
 
           const { allUsers = [] } = data
           if (error && networkStatus === 8) console.info("Network error. Using cached data", allUsers)
-
           return (
             <div>
-              <Table striped bordered condensed hover>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Date</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {allUsers.map((item, key) => <UserItem key={key}  {...{ item }} />)}
-                </tbody>
-              </Table>
+              <ListUserTable allUsers={allUsers} ></ListUserTable>
               <ButtonToolbar>
                 <Button bsStyle="success" onClick={() => refetch()}>Refresh</Button>
-                <Button bsStyle="info" onClick={() => this.handleLoadMore()}>Load more</Button>
+                <Button bsStyle="info" onClick={() => this.handleLoadMore(fetchMore)}>Load more</Button>
                 <Button bsStyle="info" onClick={() => this.handleSubscribeForMore(subscribeToMore)}>Subscribe for more</Button>
               </ButtonToolbar>
             </div>
@@ -84,7 +100,6 @@ export class ListUser extends React.Component {
 class UserItem extends React.Component {
 
   state = { loading: false, isOffline: false }
-
 
   constructor() {
     super()
@@ -145,14 +160,14 @@ class UserItem extends React.Component {
   }
 
   updateDelete = (cache, { data: { deleteUser } }) => {
-    const { allUsers } = cache.readQuery({ query: GET_USERS })
+    const { allUsers } = cache.readQuery({ query: GET_USERS, variables: { "first": 5 } })
     const newUsers = allUsers.filter((user) => {
       return deleteUser.id !== user.id
     });
     cache.writeQuery({
       query: GET_USERS,
       data: {
-        allUsers: newUsers
+        'allUsers': newUsers
       }
     })
   }
