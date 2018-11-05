@@ -68,8 +68,10 @@ export class ListUser extends React.Component {
     if (!subscriptionData.data) return prev;
     if (prev.allUsers && Array.isArray(prev.allUsers)) {
       const newItem = subscriptionData.data.userCreated;
-      prev.allUsers.push(newItem)
       console.log("Added new item using subscription", newItem)
+      return {
+        allUsers: [...prev.allUsers, newItem]
+      };
     }
     return prev;
   }
@@ -160,7 +162,7 @@ class UserItem extends React.Component {
   }
 
   updateDelete = (cache, { data: { deleteUser } }) => {
-    const { allUsers } = cache.readQuery({ query: GET_USERS, variables: { "first": 5 } })
+    const { allUsers } = cache.readQuery({ query: GET_USERS })
     const newUsers = allUsers.filter((user) => {
       return deleteUser.id !== user.id
     });
