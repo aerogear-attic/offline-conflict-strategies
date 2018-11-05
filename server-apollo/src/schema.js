@@ -39,6 +39,9 @@ const resolvers = {
         result.offset(args.after)
       } else if (args.first) {
         result.limit(args.first)
+      } else {
+        // Default limit
+        result.limit(5)
       }
       return result
     },
@@ -67,9 +70,9 @@ const resolvers = {
 
           const conflict = context.detectConflict(currentRecord, args) // detect conflict
 
-          if (conflict) {
-            updateArgs = context.handleConflict(context.conflictHandlers.RETURN_TO_CLIENT, conflict, currentRecord, args)
-          }
+      if (conflict) {
+        updateArgs = context.handleConflict(context.conflictHandlers.RETURN_TO_CLIENT, conflict, currentRecord, args)
+      }
 
           const result = await trx('users').update({ ...updateArgs, version: currentRecord.version + 1 }).where({ 'id': id }).returning('*').then((rows) => rows[0])
           resolve(result)

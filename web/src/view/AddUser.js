@@ -8,7 +8,7 @@ const update = (cache, { data: { createUser } }) => {
   const { allUsers } = cache.readQuery({ query: GET_USERS })
   cache.writeQuery({
     query: GET_USERS,
-    data: { allUsers: allUsers.concat([createUser]) }
+    data: { "allUsers": allUsers.concat([createUser]) }
   })
 }
 const setOptimisticResponse = (data) => {

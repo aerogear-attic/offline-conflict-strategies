@@ -5,48 +5,91 @@ import moment from 'moment'
 import { Utils } from 'pcmli.umbrella.uni-core'
 import { withApollo } from 'react-apollo'
 
-import { GET_USERS, DELETE_USER, UPDATE_USER } from '../queries'
+import { GET_USERS, USER_SUBSCRIPTION, DELETE_USER, UPDATE_USER } from '../queries'
+
+export class ListUserTable extends React.Component {
+  render() {
+    return (
+      <Table striped bordered condensed hover>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {this.props.allUsers.map((item, key) => <UserItem key={key}  {...{ item }} />)}
+        </tbody>
+      </Table>
+    )
+  }
+}
 
 export class ListUser extends React.Component {
   constructor(props) {
     super(props);
     this.state = { first: Number(props.first) };
-
     // This binding is necessary to make `this` work in the callback
     this.handleLoadMore = this.handleLoadMore.bind(this);
   }
 
-  handleLoadMore() {
+  handleLoadMore(fetchMore) {
     this.setState(state => ({
       first: state.first * 2
     }));
+    fetchMore({
+      variables: {
+        first: this.state.first
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return prev;
+        return Object.assign({}, prev, {
+          allUsers: [...prev.allUsers, ...fetchMoreResult.allUsers]
+        });
+      }
+    })
+  }
+
+  handleSubscribeForMore(subscribeToMore) {
+    if (!this.userUpdatesSubscription) {
+      this.userUpdatesSubscription = subscribeToMore({
+        document: USER_SUBSCRIPTION,
+        updateQuery: this.subscriptionUpdate,
+      })
+    } else {
+      // detect error and resubscribe if needed = UserUpdatesSubscription.catch()
+      console.log("Already subscribed to UserCreated updates.")
+    }
+  }
+
+  subscriptionUpdate(prev, { subscriptionData }) {
+    console.log(prev, subscriptionData)
+    if (!subscriptionData.data) return prev;
+    if (prev.allUsers && Array.isArray(prev.allUsers)) {
+      const newItem = subscriptionData.data.userCreated;
+      console.log("Added new item using subscription", newItem)
+      return {
+        allUsers: [...prev.allUsers, newItem]
+      };
+    }
+    return prev;
   }
 
   render() {
     return (
       <Query query={GET_USERS} fetchPolicy="cache-and-network" errorPolicy="all">
-        {({ networkStatus, refetch, error, data = {} }) => {
+        {({ networkStatus, subscribeToMore, fetchMore, refetch, error, data = {} }) => {
 
           const { allUsers = [] } = data
           if (error && networkStatus === 8) console.info("Network error. Using cached data", allUsers)
-
           return (
             <div>
-              <Table striped bordered condensed hover>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Date</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {allUsers.map((item, key) => <UserItem key={key}  {...{ item }} />)}
-                </tbody>
-              </Table>
+              <ListUserTable allUsers={allUsers} ></ListUserTable>
               <ButtonToolbar>
                 <Button bsStyle="success" onClick={() => refetch()}>Refresh</Button>
-                <Button bsStyle="info" onClick={() => this.handleLoadMore()}>Load more</Button>
+                <Button bsStyle="info" onClick={() => this.handleLoadMore(fetchMore)}>Load more</Button>
+                <Button bsStyle="info" onClick={() => this.handleSubscribeForMore(subscribeToMore)}>Subscribe for more</Button>
               </ButtonToolbar>
             </div>
           )
@@ -59,7 +102,6 @@ export class ListUser extends React.Component {
 class UserItem extends React.Component {
 
   state = { loading: false, isOffline: false }
-
 
   constructor() {
     super()
@@ -76,7 +118,8 @@ class UserItem extends React.Component {
       }
     })
   }
-  
+
+
   onUpdate = async ({ item }) => {
     const { client } = this.props
     const { isOffline } = this.state
@@ -130,7 +173,6 @@ class UserItem extends React.Component {
       }
     })
   }
-
 
   onDelete = async ({ item }) => {
     const { client } = this.props
