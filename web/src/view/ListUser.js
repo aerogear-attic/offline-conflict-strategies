@@ -169,7 +169,7 @@ class UserItem extends React.Component {
     cache.writeQuery({
       query: GET_USERS,
       data: {
-        'allUsers': newUsers
+        allUsers: newUsers
       }
     })
   }
