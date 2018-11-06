@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 
 const { ApolloServer } = require('apollo-server-express')
-const { handleConflict, detectConflict, conflictHandlers } = require('./sdk')
+const { handleConflict, detectConflict, conflictHandlers, withConflict } = require('./sdk')
 
 const connect = require('./db')
 const schema = require('./schema')
@@ -20,9 +20,13 @@ const dbOptions = {
 const PORT = 4000
 
 async function start () {
-  // connect to db
-  const db = await connect(dbOptions)
   const app = express()
+
+  // connect to db
+  const dataSource = {
+    client: await connect(dbOptions),
+    type: 'knex'
+  }
 
   const apolloServer = new ApolloServer({
     schema,
@@ -30,10 +34,11 @@ async function start () {
       // pass request + db ref into context for each resolver
       return {
         req: req,
-        db: db,
+        db: dataSource.client,
         detectConflict,
         handleConflict,
-        conflictHandlers
+        conflictHandlers,
+        withConflict: withConflict(dataSource)
       }
     },
     playground: {
@@ -54,8 +59,9 @@ async function start () {
   apolloServer.installSubscriptionHandlers(httpServer)
   apolloServer.applyMiddleware({ app })
 
+
   httpServer.listen({ port: PORT }, () => {
-    console.log(`🚀  Server ready at http://localhost:${PORT}/graphql`)
+    console.log(`🚀  Server ready at http://localhost:${PORT}/graphql`);
   });
 }
 

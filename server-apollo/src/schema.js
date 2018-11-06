@@ -3,6 +3,7 @@ const { makeExecutableSchema } = require('graphql-tools')
 const { GraphQLNonNull } = require('graphql')
 const { combineResolvers, pipeResolvers } = require('graphql-resolvers')
 const { pubSub, EVENTS } = require('./subscriptions')
+const { withConflict } = require('./sdk/withConflict')
 
 const typeDefs = gql`
 type User {
@@ -62,21 +63,15 @@ const resolvers = {
       return result
     },
     updateUser: async (obj, args, context, info) => {
-      return new Promise((resolve, reject) => {
-        context.db.transaction(async (trx) => {
-          let { id, version, ...updateArgs } = args
-          const currentRecord = await trx('users').select().where('id', args.id).then((rows) => rows[0])
-          if (!currentRecord) return null // or not found error??
-
-          const conflict = context.detectConflict(currentRecord, args) // detect conflict
-
-      if (conflict) {
-        updateArgs = context.handleConflict(context.conflictHandlers.RETURN_TO_CLIENT, conflict, currentRecord, args)
-      }
-
-          const result = await trx('users').update({ ...updateArgs, version: currentRecord.version + 1 }).where({ 'id': id }).returning('*').then((rows) => rows[0])
-          resolve(result)
-        }).catch(reject)
+      return context.withConflict({
+        args,
+        read: async (db, args) => {
+          return await db('users').select().where('id', args.id).then((rows) => rows[0])
+        },
+        write: async (db, data) => {
+          return await db('users').update(data).where({ 'id': args.id }).returning('*').then((rows) => rows[0])
+        },
+        conflictHandler: context.conflictHandlers.RETURN_TO_CLIENT
       })
     },
     deleteUser: async (obj, args, context, info) => {
