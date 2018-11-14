@@ -136,7 +136,7 @@ class UserItem extends React.Component {
     }
     this.setState({ loading: true })
     if (isOffline) {
-      client.mutate({ mutation: UPDATE_USER, variables, optimisticResponse, errorPolicy: 'ignore', update: this.updateList })
+      client.mutate({ mutation: UPDATE_USER, variables, optimisticResponse, errorPolicy: 'all', update: this.updateList })
       this.setState({ loading: false })
     }
     else {
@@ -145,7 +145,7 @@ class UserItem extends React.Component {
           mutation: UPDATE_USER,
           variables,
           optimisticResponse,
-          errorPolicy: 'ignore',
+          errorPolicy: 'all',
           refetchQueries: [{
             query: GET_USERS
           }]
