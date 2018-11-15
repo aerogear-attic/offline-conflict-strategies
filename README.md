@@ -49,6 +49,14 @@ npm run start
 
 ### Running the App
 
+You will need to tell cordova whatever platform you intend on using first:
+
+```
+cordova platform add android
+cordova platform add ios
+cordova platform add browser
+```
+
 #### Web View:
 
 ```

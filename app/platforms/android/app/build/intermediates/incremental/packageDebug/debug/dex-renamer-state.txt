@@ -1,4 +1,0 @@
-#Wed Nov 14 11:17:38 GMT 2018
-base.0=/Users/scoady/work/cordova-dev-app/app/platforms/android/app/build/intermediates/transforms/dexMerger/debug/0
-path.0=classes.dex
-renamed.0=classes.dex
