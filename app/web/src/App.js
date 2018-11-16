@@ -13,11 +13,6 @@ class App extends Component {
   async componentDidMount() {
     const apolloClient = await setupApolloClient()
 
-    //if there are items that needs to be sync do it here
-    const syncOfflineMutation = new SyncOfflineMutation({apolloClient, storage: window.localStorage})
-    await syncOfflineMutation.init()
-    await syncOfflineMutation.sync()
-
     this.setState({apolloClient})
   }
 
@@ -41,9 +36,7 @@ class App extends Component {
             <AddUser/>
             <ListUser first="3"/>
             <div>
-             
             </div>
-            
           </div>
 
         </React.Fragment>
