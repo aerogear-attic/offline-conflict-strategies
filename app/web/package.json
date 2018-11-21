@@ -29,6 +29,7 @@
     "zen-observable": "^0.8.8"
   },
   "scripts": {
+    "link-and-compile": "npm link @aerogear/datasync-js && cd node_modules/@aerogear/datasync-js/src/ && tsc",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",

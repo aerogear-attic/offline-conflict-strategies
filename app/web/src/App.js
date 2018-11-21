@@ -4,7 +4,6 @@ import {ApolloProvider} from 'react-apollo'
 import {ListUser} from './view/ListUser'
 import {AddUser} from './view/AddUser'
 import {setupApolloClient} from './sdk/apolloClient'
-import {SyncOfflineMutation} from './sdk/mutations/SyncOfflineMutation'
 
 class App extends Component {
 
@@ -34,7 +33,7 @@ class App extends Component {
           <div className="container">
             {/* <SyncButton/> */}
             <AddUser/>
-            <ListUser first="3"/>
+            <ListUser first="1"/>
             <div>
             </div>
           </div>

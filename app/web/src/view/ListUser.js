@@ -31,7 +31,7 @@ export class ListUser extends React.Component {
     super(props);
     this.state = { first: Number(props.first) };
     // This binding is necessary to make `this` work in the callback
-    this.handleLoadMore = this.handleLoadMore.bind(this);
+    // this.handleLoadMore = this.handleLoadMore.bind(this);
   }
 
   handleLoadMore(fetchMore) {
@@ -45,7 +45,7 @@ export class ListUser extends React.Component {
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult) return prev;
         return Object.assign({}, prev, {
-          allUsers: [...prev.allUsers, ...fetchMoreResult.allUsers]
+          allUsers: [fetchMoreResult.allUsers]
         });
       }
     })
@@ -128,6 +128,7 @@ class UserItem extends React.Component {
       deBounceKey: 1,
       deBounceDelay : 10000
     }
+    const errorPolicy = 'ignore';
 
     //use the variable input as the value of optimisticResponse added on the props
 
@@ -140,7 +141,7 @@ class UserItem extends React.Component {
     }
     this.setState({ loading: true })
     if (isOffline) {
-      client.mutate({ mutation: UPDATE_USER, variables, optimisticResponse, errorPolicy: 'ignore', update: this.updateList, updateContext})
+      client.mutate({ mutation: UPDATE_USER, variables, optimisticResponse, errorPolicy, update: this.updateList, context: updateContext})
       this.setState({ loading: false })
     }
     else {
@@ -148,9 +149,9 @@ class UserItem extends React.Component {
         await client.mutate({
           mutation: UPDATE_USER,
           variables,
-          updateContext,
+          context: updateContext,
           optimisticResponse,
-          errorPolicy: 'ignore',
+          errorPolicy,
           refetchQueries: [{
             query: GET_USERS
           }]

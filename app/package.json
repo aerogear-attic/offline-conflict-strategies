@@ -4,10 +4,20 @@
     "version": "1.0.0",
     "description": "A sample Apache Cordova application that responds to the deviceready event.",
     "main": "index.js",
+    "watch": {
+        "start": {
+            "patterns": [
+                "web/src",
+                "web/node_modules/@aerogear/datasync-js/src"
+            ],
+            "extensions": "js, ts"
+        }
+    },
     "scripts": {
         "prepare": "mkdir -p www/ && cd web && npm install",
-        "start": "cd web && npm link @aerogear/datasync-js && react-scripts build && cp -R ./build/ ../www && cordova serve",
+        "start": "cd web && npm run link-and-compile && react-scripts build && cp -R ./build/ ../www && cordova serve",
         "start-ios": "cd web && npm link @aerogear/datasync-js && react-scripts build && cp -R ./build/ ../www && cordova emulate ios --buildFlag='-UseModernBuildSystem=0'",
+        "watch-start": "npm-watch start",
         "start-android": "cd web && npm link @aerogear/datasync-js && react-scripts build && cp -R ./build/ ../www && cordova run android",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
@@ -17,6 +27,7 @@
         "cordova-android": "^7.1.2",
         "cordova-browser": "^5.0.4",
         "cordova-plugin-whitelist": "^1.3.3",
+        "npm-watch": "^0.4.0",
         "react-scripts": "2.0.5"
     },
     "cordova": {
