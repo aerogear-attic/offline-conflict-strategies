@@ -124,6 +124,10 @@ class UserItem extends React.Component {
     const { client } = this.props
     const { isOffline } = this.state
     const variables = { name: `${item.name}_${Utils.generateId(1)}`, dateOfBirth: new moment().toString(), id: item.id, version: item.version }
+    const updateContext = {
+      deBounceKey: 1,
+      deBounceDelay : 10000
+    }
 
     //use the variable input as the value of optimisticResponse added on the props
 
@@ -136,7 +140,7 @@ class UserItem extends React.Component {
     }
     this.setState({ loading: true })
     if (isOffline) {
-      client.mutate({ mutation: UPDATE_USER, variables, optimisticResponse, errorPolicy: 'ignore', update: this.updateList })
+      client.mutate({ mutation: UPDATE_USER, variables, optimisticResponse, errorPolicy: 'ignore', update: this.updateList, updateContext})
       this.setState({ loading: false })
     }
     else {
@@ -144,6 +148,7 @@ class UserItem extends React.Component {
         await client.mutate({
           mutation: UPDATE_USER,
           variables,
+          updateContext,
           optimisticResponse,
           errorPolicy: 'ignore',
           refetchQueries: [{

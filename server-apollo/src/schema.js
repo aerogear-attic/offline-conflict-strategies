@@ -69,7 +69,9 @@ const resolvers = {
           return await db('users').select().where('id', args.id).then((rows) => rows[0])
         },
         write: async (db, data) => {
-          return await db('users').update(data).where({ 'id': args.id }).returning('*').then((rows) => rows[0])
+          const result =  await db('users').update(data).where({ 'id': args.id }).returning('*').then((rows) => rows[0])
+          console.log("updateResult", result)
+          return result
         },
         conflictHandler: context.conflictHandlers.RETURN_TO_CLIENT
       })
