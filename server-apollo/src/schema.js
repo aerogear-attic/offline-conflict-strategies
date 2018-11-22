@@ -34,16 +34,17 @@ type Subscription {
 const resolvers = {
   Query: {
     allUsers: async (obj, args, context) => {
-      const result = context.db.select().from('users')
-      if (args.first && args.after) {
-        result.limit(args.first)
-        result.offset(args.after)
-      } else if (args.first) {
-        result.limit(args.first)
-      } else {
-        // Default limit
-        result.limit(5)
-      }
+      const result = await context.db.select().from('users')
+      // if (args.first && args.after) {
+      //   result.limit(args.first)
+      //   result.offset(args.after)
+      // } else if (args.first) {
+      //   result.limit(args.first)
+      // } else {
+      //   // Default limit
+      //   result.limit(5)
+      // }
+      console.log("allUsers DB RESULTS", result)
       return result
     },
     getUser: async (obj, args, context, info) => {
