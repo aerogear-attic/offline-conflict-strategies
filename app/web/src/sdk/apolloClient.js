@@ -1,5 +1,4 @@
-import { createClient, strategies } from '@aerogear/datasync-js'
-import ApolloClient from 'apollo-client';
+import { createClient, strategies } from '@aerogear/datasync-js';
 export const setupApolloClient = async () => {
 
   // Local server
