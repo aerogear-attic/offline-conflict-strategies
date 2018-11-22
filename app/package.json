@@ -8,9 +8,9 @@
         "start": {
             "patterns": [
                 "web/src",
-                "web/node_modules/@aerogear/datasync-js/src"
+                "web/node_modules/@aerogear/datasync-js/src/*.ts"
             ],
-            "extensions": "js, ts"
+            "extensions": "js,ts"
         }
     },
     "scripts": {

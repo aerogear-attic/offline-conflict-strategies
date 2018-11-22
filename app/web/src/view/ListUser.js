@@ -9,6 +9,7 @@ import { GET_USERS, USER_SUBSCRIPTION, DELETE_USER, UPDATE_USER } from '../queri
 
 export class ListUserTable extends React.Component {
   render() {
+  console.log("PROPS", this.props)
     return (
       <Table striped bordered condensed hover>
         <thead>
@@ -31,7 +32,7 @@ export class ListUser extends React.Component {
     super(props);
     this.state = { first: Number(props.first) };
     // This binding is necessary to make `this` work in the callback
-    // this.handleLoadMore = this.handleLoadMore.bind(this);
+    this.handleLoadMore = this.handleLoadMore.bind(this);
   }
 
   handleLoadMore(fetchMore) {
@@ -45,7 +46,7 @@ export class ListUser extends React.Component {
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult) return prev;
         return Object.assign({}, prev, {
-          allUsers: [fetchMoreResult.allUsers]
+          allUsers: [...prev.allUsers, ...fetchMoreResult.allUsers]
         });
       }
     })
@@ -78,9 +79,9 @@ export class ListUser extends React.Component {
 
   render() {
     return (
-      <Query query={GET_USERS} fetchPolicy="cache-and-network" errorPolicy="all">
+      <Query query={GET_USERS} errorPolicy="all">
         {({ networkStatus, subscribeToMore, fetchMore, refetch, error, data = {} }) => {
-
+          console.log("DATA", data)
           const { allUsers = [] } = data
           if (error && networkStatus === 8) console.info("Network error. Using cached data", allUsers)
           return (
