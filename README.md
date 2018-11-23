@@ -27,13 +27,15 @@ cordova:
 npm i -g cordova@8.1.2
 ```
 
-A local copy of the Aerogear javascript sdk:
+A local copy of the AeroGear javascript sdk:
 
 ```
 git clone git@github.com:aerogear/aerogear-js-sdk.git
-cd packages/sync
+cd aerogear-js-sdk
+npm i
+npm run bootstrap
 npm run build
-npm link .
+( cd packages/sync ; npm link . )
 ```
 
 This repo consists of two parts, the server and the mobile app (cordova).
@@ -41,7 +43,7 @@ This repo consists of two parts, the server and the mobile app (cordova).
 ### Running the server
 
 ```
-cd ./server
+cd ./server-apollo
 docker-compose up -d
 npm install
 npm run start
@@ -57,7 +59,7 @@ cordova platform add ios
 cordova platform add browser
 ```
 
-#### Web View:
+#### Web Browser:
 
 ```
 cd ./app
