@@ -34,7 +34,7 @@ type Subscription {
 const resolvers = {
   Query: {
     allUsers: async (obj, args, context) => {
-      const result = await context.db.select().from('users')
+      const result =  context.db.select().from('users')
       if (args.first && args.after) {
         result.limit(args.first)
         result.offset(args.after)
