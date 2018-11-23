@@ -1,7 +1,6 @@
 const express = require('express')
 const fs = require('fs')
 const path = require('path')
-
 const { ApolloServer } = require('apollo-server-express')
 const { handleConflict, detectConflict, conflictHandlers, withConflict } = require('./sdk')
 

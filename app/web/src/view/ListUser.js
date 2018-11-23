@@ -9,7 +9,6 @@ import { GET_USERS, USER_SUBSCRIPTION, DELETE_USER, UPDATE_USER } from '../queri
 
 export class ListUserTable extends React.Component {
   render() {
-  console.log("PROPS", this.props)
     return (
       <Table striped bordered condensed hover>
         <thead>
@@ -65,7 +64,6 @@ export class ListUser extends React.Component {
   }
 
   subscriptionUpdate(prev, { subscriptionData }) {
-    console.log(prev, subscriptionData)
     if (!subscriptionData.data) return prev;
     if (prev.allUsers && Array.isArray(prev.allUsers)) {
       const newItem = subscriptionData.data.userCreated;
@@ -79,9 +77,8 @@ export class ListUser extends React.Component {
 
   render() {
     return (
-      <Query query={GET_USERS} errorPolicy="all">
+      <Query query={GET_USERS} errorPolicy="ignore">
         {({ networkStatus, subscribeToMore, fetchMore, refetch, error, data = {} }) => {
-          console.log("DATA", data)
           const { allUsers = [] } = data
           if (error && networkStatus === 8) console.info("Network error. Using cached data", allUsers)
           return (

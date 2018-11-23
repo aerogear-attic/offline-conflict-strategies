@@ -1,11 +1,12 @@
 const { gql } = require('apollo-server')
-const { makeExecutableSchema } = require('graphql-tools')
+const { makeExecutableSchema, SchemaDirectiveVisitor } = require('graphql-tools')
 const { GraphQLNonNull } = require('graphql')
 const { combineResolvers, pipeResolvers } = require('graphql-resolvers')
 const { pubSub, EVENTS } = require('./subscriptions')
 const { withConflict } = require('./sdk/withConflict')
 
 const typeDefs = gql`
+directive @onlineOnly on FIELD
 type User {
   id: ID!
   name: String!
@@ -34,7 +35,7 @@ type Subscription {
 const resolvers = {
   Query: {
     allUsers: async (obj, args, context) => {
-      const result =  context.db.select().from('users')
+      const result = context.db.select().from('users')
       if (args.first && args.after) {
         result.limit(args.first)
         result.offset(args.after)
@@ -87,7 +88,6 @@ const resolvers = {
     },
   },
 }
-
 const schema = makeExecutableSchema({ typeDefs, resolvers })
 
 module.exports = schema

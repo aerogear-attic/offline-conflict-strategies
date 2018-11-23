@@ -24,7 +24,7 @@ export const GET_USERS = gql`
 
 export const DELETE_USER = gql`
 mutation deleteUser($id: ID!){
-  deleteUser(id: $id){
+  deleteUser(id: $id) @onlineOnly{
     id
     name
     dateOfBirth
