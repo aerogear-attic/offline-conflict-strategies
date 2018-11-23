@@ -64,6 +64,7 @@ cordova platform add browser
 ```
 cd ./app
 npm install
+npm link @aerogear/datasync-js
 npm run start
 ```
 
