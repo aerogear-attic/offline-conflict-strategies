@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@aerogear/core": "^2.0.0",
     "@aerogear/datasync-js": "^2.0.0",
     "apollo-cache-inmemory": "^1.3.5",
     "apollo-cache-persist": "^0.1.1",
