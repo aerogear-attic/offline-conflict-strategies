@@ -166,6 +166,7 @@ class UserItem extends React.Component {
     const newUsers = allUsers.filter((user) => {
       return deleteUser.id !== user.id
     });
+    cache.writeData({ id: `User${deleteUser.id}`, data: null });
     cache.writeQuery({
       query: GET_USERS,
       data: {
