@@ -35,7 +35,7 @@ mutation deleteUser($id: ID!){
 
 export const UPDATE_USER = gql`
 mutation updateUser($dateOfBirth: String, $id: ID!, $name: String, $version: Int!) {
-  updateUser(dateOfBirth: $dateOfBirth, id: $id, name: $name, version: $version) {
+  updateUser(dateOfBirth: $dateOfBirth, id: $id, name: $name, version: $version) @noSquash {
     dateOfBirth
     id
     name

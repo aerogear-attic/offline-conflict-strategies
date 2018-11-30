@@ -6,6 +6,7 @@ const { pubSub, EVENTS } = require('./subscriptions')
 const { withConflict } = require('./sdk/withConflict')
 
 const typeDefs = gql`
+directive @noSquash on FIELD
 type User {
   id: ID!
   name: String!
